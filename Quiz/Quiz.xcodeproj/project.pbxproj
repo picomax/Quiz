@@ -13,7 +13,15 @@
 		0414D2501F34FCF400FB9952 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0414D24E1F34FCF400FB9952 /* LaunchScreen.storyboard */; };
 		0414D2511F34FCF400FB9952 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0414D24F1F34FCF400FB9952 /* Main.storyboard */; };
 		0414D2531F34FD0100FB9952 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0414D2521F34FD0100FB9952 /* Info.plist */; };
-		0414D2551F34FD0D00FB9952 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0414D2541F34FD0D00FB9952 /* ViewController.swift */; };
+		04DC18631F3591AF00EA0357 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DC18621F3591AF00EA0357 /* MainViewController.swift */; };
+		04DC18651F3591BC00EA0357 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DC18641F3591BC00EA0357 /* MapViewController.swift */; };
+		04DC18671F3591C700EA0357 /* VideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DC18661F3591C700EA0357 /* VideoViewController.swift */; };
+		04DC186D1F3592A800EA0357 /* Define.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DC18691F3592A800EA0357 /* Define.swift */; };
+		04DC186E1F3592A800EA0357 /* UIAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DC186B1F3592A800EA0357 /* UIAlertController.swift */; };
+		04DC186F1F3592A800EA0357 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DC186C1F3592A800EA0357 /* UserDefaults.swift */; };
+		04DC18721F35933700EA0357 /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DC18711F35933700EA0357 /* SignInViewController.swift */; };
+		04DC18741F35936300EA0357 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 04DC18731F35936300EA0357 /* GoogleService-Info.plist */; };
+		04DC18761F35942700EA0357 /* SignIn.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04DC18751F35942700EA0357 /* SignIn.storyboard */; };
 		318B5065C828EF3CAE4E5462 /* Pods_Quiz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A121A323A50228B134EBDC /* Pods_Quiz.framework */; };
 		395BE497837470A5B55B94AF /* Pods_QuizTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D73BD355D5A99E0F4729C0E6 /* Pods_QuizTests.framework */; };
 /* End PBXBuildFile section */
@@ -38,7 +46,15 @@
 		0414D24E1F34FCF400FB9952 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0414D24F1F34FCF400FB9952 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		0414D2521F34FD0100FB9952 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0414D2541F34FD0D00FB9952 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		04DC18621F3591AF00EA0357 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		04DC18641F3591BC00EA0357 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		04DC18661F3591C700EA0357 /* VideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoViewController.swift; sourceTree = "<group>"; };
+		04DC18691F3592A800EA0357 /* Define.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Define.swift; sourceTree = "<group>"; };
+		04DC186B1F3592A800EA0357 /* UIAlertController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertController.swift; sourceTree = "<group>"; };
+		04DC186C1F3592A800EA0357 /* UserDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
+		04DC18711F35933700EA0357 /* SignInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
+		04DC18731F35936300EA0357 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		04DC18751F35942700EA0357 /* SignIn.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SignIn.storyboard; sourceTree = "<group>"; };
 		263E204A11178D74EFFF740D /* Pods-QuizTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuizTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-QuizTests/Pods-QuizTests.release.xcconfig"; sourceTree = "<group>"; };
 		8950DD01E67B92ACCE1AE277 /* Pods-QuizTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuizTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-QuizTests/Pods-QuizTests.debug.xcconfig"; sourceTree = "<group>"; };
 		C7AB80EA5E056B70988AF83C /* Pods-Quiz.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Quiz.release.xcconfig"; path = "Pods/Target Support Files/Pods-Quiz/Pods-Quiz.release.xcconfig"; sourceTree = "<group>"; };
@@ -92,6 +108,8 @@
 			children = (
 				0414D21C1F34FA0C00FB9952 /* AppDelegate.swift */,
 				0414D2491F34FCB200FB9952 /* Assets */,
+				04DC18681F3592A800EA0357 /* Define */,
+				04DC186A1F3592A800EA0357 /* Extension */,
 				0414D24B1F34FCB200FB9952 /* Storyboards */,
 				0414D24C1F34FCB200FB9952 /* UIViewController */,
 			);
@@ -111,6 +129,7 @@
 			isa = PBXGroup;
 			children = (
 				0414D24A1F34FCB200FB9952 /* Assets.xcassets */,
+				04DC18731F35936300EA0357 /* GoogleService-Info.plist */,
 				0414D2521F34FD0100FB9952 /* Info.plist */,
 			);
 			path = Assets;
@@ -121,6 +140,7 @@
 			children = (
 				0414D24E1F34FCF400FB9952 /* LaunchScreen.storyboard */,
 				0414D24F1F34FCF400FB9952 /* Main.storyboard */,
+				04DC18751F35942700EA0357 /* SignIn.storyboard */,
 			);
 			path = Storyboards;
 			sourceTree = "<group>";
@@ -128,9 +148,61 @@
 		0414D24C1F34FCB200FB9952 /* UIViewController */ = {
 			isa = PBXGroup;
 			children = (
-				0414D2541F34FD0D00FB9952 /* ViewController.swift */,
+				04DC185F1F35917E00EA0357 /* Main */,
+				04DC18601F35917E00EA0357 /* Map */,
+				04DC18701F35932900EA0357 /* SignIn */,
+				04DC18611F35917E00EA0357 /* Video */,
 			);
 			path = UIViewController;
+			sourceTree = "<group>";
+		};
+		04DC185F1F35917E00EA0357 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				04DC18621F3591AF00EA0357 /* MainViewController.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		04DC18601F35917E00EA0357 /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				04DC18641F3591BC00EA0357 /* MapViewController.swift */,
+			);
+			path = Map;
+			sourceTree = "<group>";
+		};
+		04DC18611F35917E00EA0357 /* Video */ = {
+			isa = PBXGroup;
+			children = (
+				04DC18661F3591C700EA0357 /* VideoViewController.swift */,
+			);
+			path = Video;
+			sourceTree = "<group>";
+		};
+		04DC18681F3592A800EA0357 /* Define */ = {
+			isa = PBXGroup;
+			children = (
+				04DC18691F3592A800EA0357 /* Define.swift */,
+			);
+			path = Define;
+			sourceTree = "<group>";
+		};
+		04DC186A1F3592A800EA0357 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				04DC186B1F3592A800EA0357 /* UIAlertController.swift */,
+				04DC186C1F3592A800EA0357 /* UserDefaults.swift */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		04DC18701F35932900EA0357 /* SignIn */ = {
+			isa = PBXGroup;
+			children = (
+				04DC18711F35933700EA0357 /* SignInViewController.swift */,
+			);
+			path = SignIn;
 			sourceTree = "<group>";
 		};
 		35CF27F0609DD4D9BCCAB8EF /* Frameworks */ = {
@@ -245,7 +317,9 @@
 			files = (
 				0414D2531F34FD0100FB9952 /* Info.plist in Resources */,
 				0414D2511F34FCF400FB9952 /* Main.storyboard in Resources */,
+				04DC18741F35936300EA0357 /* GoogleService-Info.plist in Resources */,
 				0414D24D1F34FCB200FB9952 /* Assets.xcassets in Resources */,
+				04DC18761F35942700EA0357 /* SignIn.storyboard in Resources */,
 				0414D2501F34FCF400FB9952 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -357,8 +431,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0414D2551F34FD0D00FB9952 /* ViewController.swift in Sources */,
+				04DC18631F3591AF00EA0357 /* MainViewController.swift in Sources */,
 				0414D21D1F34FA0C00FB9952 /* AppDelegate.swift in Sources */,
+				04DC18671F3591C700EA0357 /* VideoViewController.swift in Sources */,
+				04DC186D1F3592A800EA0357 /* Define.swift in Sources */,
+				04DC18721F35933700EA0357 /* SignInViewController.swift in Sources */,
+				04DC186E1F3592A800EA0357 /* UIAlertController.swift in Sources */,
+				04DC186F1F3592A800EA0357 /* UserDefaults.swift in Sources */,
+				04DC18651F3591BC00EA0357 /* MapViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
