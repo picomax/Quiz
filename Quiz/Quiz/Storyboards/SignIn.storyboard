@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Qah-Ap-a2S">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Sign In View Controller-->
+        <scene sceneID="nA4-Wb-LKY">
+            <objects>
+                <viewController id="Qah-Ap-a2S" customClass="SignInViewController" customModule="Quiz" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="XrX-1F-EMm"/>
+                        <viewControllerLayoutGuide type="bottom" id="7HA-d8-PHJ"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="heJ-Y6-dxV">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="MFZ-le-Uli" customClass="SkyFloatingLabelTextField" customModule="SkyFloatingLabelTextField">
+                                <rect key="frame" x="36" y="70" width="303" height="39"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="emailAddress"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="Email"/>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="title" value="Email"/>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="titleColor">
+                                        <color key="value" red="0.46832381880389606" green="0.85063147668393779" blue="0.46521737395306806" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="79g-qS-hSk" customClass="SkyFloatingLabelTextField" customModule="SkyFloatingLabelTextField">
+                                <rect key="frame" x="36" y="129" width="303" height="39.5"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" secureTextEntry="YES"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="Password"/>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="title" value="Password"/>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="titleColor">
+                                        <color key="value" red="0.85063147668393779" green="0.40452273078747181" blue="0.33097683872387473" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TVA-fT-Ydx">
+                                <rect key="frame" x="66" y="218.5" width="243" height="30"/>
+                                <state key="normal" title="Sign In"/>
+                                <connections>
+                                    <action selector="didSelectSignIn" destination="Qah-Ap-a2S" eventType="touchUpInside" id="LxH-dn-XEk"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7TB-L3-7OJ">
+                                <rect key="frame" x="66" y="268.5" width="243" height="30"/>
+                                <state key="normal" title="Sign Up"/>
+                                <connections>
+                                    <action selector="didSelectSignUp" destination="Qah-Ap-a2S" eventType="touchUpInside" id="lZ7-r2-F8W"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="MFZ-le-Uli" secondAttribute="trailing" constant="20" id="4Ss-VJ-DV9"/>
+                            <constraint firstItem="TVA-fT-Ydx" firstAttribute="leading" secondItem="heJ-Y6-dxV" secondAttribute="leadingMargin" constant="50" id="Ags-fc-Fok"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="7TB-L3-7OJ" secondAttribute="trailing" constant="50" id="JJk-Us-RIY"/>
+                            <constraint firstItem="MFZ-le-Uli" firstAttribute="top" secondItem="XrX-1F-EMm" secondAttribute="bottom" constant="50" id="L5G-Zg-7D8"/>
+                            <constraint firstItem="MFZ-le-Uli" firstAttribute="leading" secondItem="heJ-Y6-dxV" secondAttribute="leadingMargin" constant="20" id="Vck-tV-3sx"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="TVA-fT-Ydx" secondAttribute="trailing" constant="50" id="aZ8-X6-l0B"/>
+                            <constraint firstItem="TVA-fT-Ydx" firstAttribute="top" secondItem="79g-qS-hSk" secondAttribute="bottom" constant="50" id="iSF-th-Mgv"/>
+                            <constraint firstItem="79g-qS-hSk" firstAttribute="leading" secondItem="heJ-Y6-dxV" secondAttribute="leadingMargin" constant="20" id="jNN-Tv-D71"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="79g-qS-hSk" secondAttribute="trailing" constant="20" id="omr-YX-8yd"/>
+                            <constraint firstItem="7TB-L3-7OJ" firstAttribute="top" secondItem="TVA-fT-Ydx" secondAttribute="bottom" constant="20" id="r84-jt-qed"/>
+                            <constraint firstItem="79g-qS-hSk" firstAttribute="top" secondItem="MFZ-le-Uli" secondAttribute="bottom" constant="20" id="tVw-iR-qqs"/>
+                            <constraint firstItem="7TB-L3-7OJ" firstAttribute="leading" secondItem="heJ-Y6-dxV" secondAttribute="leadingMargin" constant="50" id="wQ4-5l-T51"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="emailField" destination="MFZ-le-Uli" id="VOZ-sm-ydb"/>
+                        <outlet property="passwordField" destination="79g-qS-hSk" id="mCN-iK-gdP"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="aqx-gC-h3n" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="393" y="-170"/>
+        </scene>
+    </scenes>
+</document>

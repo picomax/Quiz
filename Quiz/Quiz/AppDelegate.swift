@@ -2,8 +2,8 @@
 //  AppDelegate.swift
 //  Quiz
 //
-//  Created by picomax on 2017. 8. 4..
-//  Copyright © 2017년 picomax. All rights reserved.
+//  Created by picomax on 04/08/2017.
+//  Copyright © 2017 picomax. All rights reserved.
 //
 
 import UIKit
