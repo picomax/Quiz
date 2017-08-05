@@ -36,6 +36,8 @@ class MapViewController: UIViewController {
         mapView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
         }
+        
+        mapView.addObserver(self, forKeyPath:"myLocation", options:NSKeyValueObservingOptions.new, context:nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {

@@ -24,8 +24,8 @@ enum QuizFeature {
     
     func title() -> String {
         switch self {
-        case .map: return "MAP"
-        case .video: return "VIDEO"
+        case .map: return "Quiz #1 (MapView)"
+        case .video: return "Quiz #2 (Record Video)"
         }
     }
 }
