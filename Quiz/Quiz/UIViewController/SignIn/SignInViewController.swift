@@ -25,11 +25,14 @@ class SignInViewController: UIViewController {
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] (user, error) in
             guard let strongSelf = self else { return }
             guard let user = user else {
-                dLog("failed to sign in ", error?.localizedDescription ?? "unknow error")
+                //dLog("failed to sign in ", error?.localizedDescription ?? "unknow error")
+                let errorMessage = error?.localizedDescription ?? "Unknow error"
+                let alert = UIAlertController(text: errorMessage, actionTitle: "OK")
+                self?.present(alert, animated: true, completion: nil)
                 return
             }
             
-            dLog("signed in ", user.email)
+            dLog("signed in ", user.email ?? "")
             strongSelf.dismiss()
         }
     }
@@ -50,12 +53,24 @@ class SignInViewController: UIViewController {
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] (user, error) in
             guard let strongSelf = self else { return }
             guard let user = user else {
-                dLog("failed to create user ", error?.localizedDescription ?? "unknown error")
+                //dLog("failed to sign up", error?.localizedDescription ?? "unknown error")
+                let errorMessage = error?.localizedDescription ?? "unknown error"
+                let alert = UIAlertController(text: "Failed to sign up - \(errorMessage)", actionTitle: "OK")
+                //present(alert, animated: true, completion: nil)
+                strongSelf.present(alert, animated: true, completion: nil)
                 return
             }
             
-            dLog("created ", user.email)
-            strongSelf.dismiss()
+            //dLog("created ", user.email)
+            //let alert = UIAlertController(text: "Success to Sign up - \(user.email ?? "")", actionTitle: "OK")
+            //strongSelf.present(alert, animated: true, completion: nil)
+            //strongSelf.dismiss()
+            
+            let alertControl = UIAlertController(title: "Sign Up", message: "Success to Sign Up - \(user.email ?? "")", preferredStyle: UIAlertControllerStyle.alert)
+            alertControl.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { (action: UIAlertAction!) in
+                strongSelf.dismiss()
+            }))
+            strongSelf.present(alertControl, animated: true, completion: nil)
         }
     }
 }
@@ -73,3 +88,5 @@ extension SignInViewController {
         dismiss(animated: true, completion: nil)
     }
 }
+
+
