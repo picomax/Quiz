@@ -15,7 +15,7 @@ import FirebaseDatabase
 class MapViewController: UIViewController {
     
     let mapView: GMSMapView = {
-        let camera = GMSCameraPosition.camera(withLatitude: -33.86, longitude: 151.20, zoom: 6.0)
+        let camera = GMSCameraPosition.camera(withLatitude: -37.33233141, longitude: -122.0312186, zoom: 1.0)
         GMSServices.provideAPIKey("AIzaSyCMwpcqS0QBRhwQ6Y9Ia-EemyB_KdBx9cs")
         let mapView = GMSMapView.map(withFrame: CGRect.zero, camera: camera)
         return mapView
@@ -40,27 +40,37 @@ class MapViewController: UIViewController {
         mapView.addObserver(self, forKeyPath:"myLocation", options:NSKeyValueObservingOptions.new, context:nil)
     }
     
+    /*
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateAllMarkers()
     }
+    */
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         mapView.isMyLocationEnabled = true
     }
     
-    fileprivate func addMarker(user: String, latitude: Double, longitude: Double, oneself: Bool) {
+    fileprivate func addMarker(user: String, latitude: Double, longitude: Double) {
         dLog("coordinate : \(latitude), \(longitude)")
         let marker = GMSMarker()
         marker.position = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        marker.title = user;
         marker.map = mapView;
     }
     
-    fileprivate func updateAllMarkers() {
+    fileprivate func updateMarkers(location: CLLocationCoordinate2D) {
         let databaseReference = Database.database().reference()
-        //let userListHandler = databaseReference.child("users").observe(.value, with: { (snapshot) in
-        _ = databaseReference.child("users").observe(.value, with: { [weak self] (snapshot) in
+        
+        guard let currentUser = Auth.auth().currentUser else { return }
+        let stdLocation: CLLocation = CLLocation.init(latitude: location.latitude, longitude: location.longitude)
+        
+        //let timestamp = Int(NSDate().timeIntervalSince1970) - 30
+        
+        //let userListHandler = databaseReference.child("location").observe(.value, with: { (snapshot) in
+        _ = databaseReference.child("location").observe(.value, with: { [weak self] (snapshot) in
+        //_ = databaseReference.child("location").queryOrdered(byChild: "timestamp").queryStarting(atValue: timestamp).observe(.value, with: { [weak self] (snapshot) in
             guard let strongSelf = self else { return }
             //let itemDictionary = snapshot.value as? [String : AnyObject] ?? [:]
             guard let itemDictionary = snapshot.value as? [String: AnyObject] else { return }
@@ -73,7 +83,18 @@ class MapViewController: UIViewController {
                         continue
                 }
                 
-                strongSelf.addMarker(user: username, latitude: latitude, longitude: longitude, oneself: false)
+                if username == currentUser.email {
+                    continue
+                }
+                
+                let newLocation: CLLocation = CLLocation.init(latitude: latitude, longitude: longitude)
+                let distanceKiloMeters = (newLocation.distance(from: stdLocation))/1000
+                let distanceMiles = distanceKiloMeters * 0.621371
+                if distanceMiles > 5 {
+                    continue
+                }
+                
+                strongSelf.addMarker(user: username, latitude: latitude, longitude: longitude)
             }
             
         })
@@ -84,11 +105,12 @@ class MapViewController: UIViewController {
         if keyPath == "myLocation", let change = change, let myLocation: CLLocation = change[.newKey] as? CLLocation {
             didFindMyLocation = false
             if !didFindMyLocation {
-                mapView.camera = GMSCameraPosition.camera(withTarget: myLocation.coordinate, zoom: 11.0)
+                mapView.camera = GMSCameraPosition.camera(withTarget: myLocation.coordinate, zoom: 12.0)
                 mapView.settings.myLocationButton = true
                 didFindMyLocation = true
                 
                 update(location: myLocation.coordinate)
+                updateMarkers(location: myLocation.coordinate)
             }
         }
     }
@@ -98,8 +120,9 @@ class MapViewController: UIViewController {
         
         guard let currentUser = Auth.auth().currentUser else { return }
         guard let userName = currentUser.email else { return }
-        let userReference = databaseReference.child("users").child(currentUser.uid)
+        let userReference = databaseReference.child("location").child(currentUser.uid)
+        let timestamp = Int(NSDate().timeIntervalSince1970)
         
-        userReference.updateChildValues(["username":userName, "latitude":location.latitude, "longitude":location.longitude])
+        userReference.updateChildValues(["username":userName, "latitude":location.latitude, "longitude":location.longitude, "timestamp":timestamp])
     }
 }
