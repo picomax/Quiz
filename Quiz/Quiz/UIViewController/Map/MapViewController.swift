@@ -52,14 +52,37 @@ class MapViewController: UIViewController {
         mapView.isMyLocationEnabled = true
     }
     
-    fileprivate func addMarker(user: String, latitude: Double, longitude: Double) {
-        dLog("coordinate : \(latitude), \(longitude)")
+    fileprivate func addMarker(location: UserLocation) {
         let marker = GMSMarker()
-        marker.position = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-        marker.title = user;
+        marker.position = CLLocationCoordinate2D(latitude: location.coordinate.latitude,
+                                                 longitude: location.coordinate.longitude)
+        marker.title = location.username
         marker.map = mapView;
     }
     
+    fileprivate func updateMarkers(location: CLLocationCoordinate2D) {
+        guard let currentUser = Auth.auth().currentUser else { return }
+        let stdLocation: CLLocation = CLLocation.init(latitude: location.latitude, longitude: location.longitude)
+        
+        UserLocation.fetch { [weak self] (locations) in
+            guard let strongSelf = self else { return }
+            for l in locations {
+                if l.username == currentUser.email {
+                    continue
+                }
+                
+                let newLocation: CLLocation = CLLocation.init(latitude: l.coordinate.latitude, longitude: l.coordinate.longitude)
+                let distanceKiloMeters = (newLocation.distance(from: stdLocation))/1000
+                let distanceMiles = distanceKiloMeters * 0.621371
+                if distanceMiles > 5 {
+                    continue
+                }
+                
+                strongSelf.addMarker(location: l)
+            }
+        }
+    }
+    /*
     fileprivate func updateMarkers(location: CLLocationCoordinate2D) {
         let databaseReference = Database.database().reference()
         
@@ -99,7 +122,8 @@ class MapViewController: UIViewController {
             
         })
     }
-    
+    */
+
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
         if keyPath == "myLocation", let change = change, let myLocation: CLLocation = change[.newKey] as? CLLocation {
@@ -115,14 +139,13 @@ class MapViewController: UIViewController {
         }
     }
     
+    //fileprivate func update(location: CLLocationCoordinate2D) {
     fileprivate func update(location: CLLocationCoordinate2D) {
-        let databaseReference = Database.database().reference()
-        
         guard let currentUser = Auth.auth().currentUser else { return }
-        guard let userName = currentUser.email else { return }
-        let userReference = databaseReference.child("location").child(currentUser.uid)
-        let timestamp = Int(NSDate().timeIntervalSince1970)
-        
-        userReference.updateChildValues(["username":userName, "latitude":location.latitude, "longitude":location.longitude, "timestamp":timestamp])
+        let location = UserLocation(uid: currentUser.uid,
+                                  username: currentUser.email ?? "NA",
+                                  coordinate: location)
+        location.update()
     }
+    
 }
