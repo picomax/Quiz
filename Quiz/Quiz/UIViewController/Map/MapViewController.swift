@@ -11,9 +11,10 @@ import GoogleMaps
 import SnapKit
 import FirebaseAuth
 import FirebaseDatabase
+import CoreLocation
 
 class MapViewController: UIViewController {
-    
+    let locationManager = CLLocationManager()
     let mapView: GMSMapView = {
         let camera = GMSCameraPosition.camera(withLatitude: -37.33233141, longitude: -122.0312186, zoom: 1.0)
         GMSServices.provideAPIKey("AIzaSyCMwpcqS0QBRhwQ6Y9Ia-EemyB_KdBx9cs")
@@ -22,11 +23,13 @@ class MapViewController: UIViewController {
     }()
     
     var didFindMyLocation = false
+    var didActiveObserver = false
     
     deinit {
-        mapView.removeObserver(self, forKeyPath:"myLocation")
+        if didActiveObserver {
+            mapView.removeObserver(self, forKeyPath:"myLocation")
+        }
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,12 +40,8 @@ class MapViewController: UIViewController {
             make.edges.equalToSuperview()
         }
         
-        mapView.addObserver(self, forKeyPath:"myLocation", options:NSKeyValueObservingOptions.new, context:nil)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        mapView.isMyLocationEnabled = true
+        mapView.delegate = self
+        locationManager.delegate = self
     }
     
     fileprivate func addMarker(location: UserLocation) {
@@ -54,6 +53,8 @@ class MapViewController: UIViewController {
     }
     
     fileprivate func updateMarkers(location: CLLocationCoordinate2D) {
+        mapView.clear()
+        
         guard let currentUser = Auth.auth().currentUser else { return }
         let stdLocation: CLLocation = CLLocation.init(latitude: location.latitude, longitude: location.longitude)
         
@@ -118,17 +119,15 @@ class MapViewController: UIViewController {
     */
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        
         if keyPath == "myLocation", let change = change, let myLocation: CLLocation = change[.newKey] as? CLLocation {
-            didFindMyLocation = false
             if !didFindMyLocation {
-                mapView.camera = GMSCameraPosition.camera(withTarget: myLocation.coordinate, zoom: 12.0)
+                mapView.camera = GMSCameraPosition.camera(withTarget: myLocation.coordinate, zoom: 14.0)
                 mapView.settings.myLocationButton = true
+                mapView.settings.compassButton = true
                 didFindMyLocation = true
-                
-                update(location: myLocation.coordinate)
-                updateMarkers(location: myLocation.coordinate)
             }
+            update(location: myLocation.coordinate)
+            updateMarkers(location: myLocation.coordinate)
         }
     }
     
@@ -141,4 +140,74 @@ class MapViewController: UIViewController {
         location.update()
     }
     
+    fileprivate func checkEnableLocation() {
+        if CLLocationManager.locationServicesEnabled() {
+            switch(CLLocationManager.authorizationStatus()) {
+            case .notDetermined:
+                locationManager.requestWhenInUseAuthorization()
+            case .restricted, .denied:
+                print("No access")
+                showAcessDeniedAlert()
+            case .authorizedAlways, .authorizedWhenInUse:
+                print("Access")
+                mapView.isMyLocationEnabled = true
+                if didActiveObserver == false {
+                    mapView.addObserver(self, forKeyPath:"myLocation", options:NSKeyValueObservingOptions.new, context:nil)
+                    didActiveObserver = true
+                }
+            }
+        } else {
+            print("Location services are not enabled")
+        }
+    }
+}
+
+extension MapViewController: GMSMapViewDelegate {
+    
+    func panoramaViewDidFinishRendering(_ panoramaView: GMSPanoramaView) {
+        dLog("haha")
+    }
+    
+    func mapViewDidFinishTileRendering(_ mapView: GMSMapView) {
+        dLog("haha")
+    }
+    
+    func mapViewSnapshotReady(_ mapView: GMSMapView) {
+        //locationManager.requestWhenInUseAuthorization()
+        checkEnableLocation()
+    }
+    
+    func showAcessDeniedAlert() {
+        let alertController = UIAlertController(title: "Location Accees Requested",
+                                                message: "The location permission was not authorized. Please enable it in Settings to continue.",
+                                                preferredStyle: .alert)
+        
+        let settingsAction = UIAlertAction(title: "Settings", style: .default) { (alertAction) in
+            
+            // THIS IS WHERE THE MAGIC HAPPENS!!!!
+            if let appSettings = URL(string: UIApplicationOpenSettingsURLString) {
+                UIApplication.shared.open(appSettings as URL)
+            }
+        }
+        alertController.addAction(settingsAction)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alertController.addAction(cancelAction)
+        
+        present(alertController, animated: true, completion: nil)
+    }
+}
+
+extension MapViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        checkEnableLocation()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {
+        dLog("haha")
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
+        dLog("haha")
+    }
 }
