@@ -40,13 +40,6 @@ class MapViewController: UIViewController {
         mapView.addObserver(self, forKeyPath:"myLocation", options:NSKeyValueObservingOptions.new, context:nil)
     }
     
-    /*
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        updateAllMarkers()
-    }
-    */
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         mapView.isMyLocationEnabled = true
