@@ -7,14 +7,14 @@ target 'Quiz' do
 
   # Pods for Quiz
   pod 'SkyFloatingLabelTextField', '~> 3.0'
-  pod 'Firebase/Core'
-  pod 'Firebase/Auth'
-  pod 'Firebase/Database'
   pod 'GoogleMaps'
   pod 'SnapKit'
   
-  pod 'Alamofire', '~> 4.4'
-  pod 'SwiftyJSON', '~> 3.1.4'
+  #Firebase
+  pod 'Firebase/Core'
+  pod 'Firebase/Auth'
+  pod 'Firebase/Database'
+  pod 'Firebase/Storage'
   
   target 'QuizTests' do
     inherit! :search_paths
