@@ -39,6 +39,10 @@ extension UserLocation: ModelProtocol {
         Database.database().reference().child(UserLocation.path).child(key).updateChildValues(rawValue)
     }
     
+    func remove() {
+        Database.database().reference().child(UserLocation.path).child(key).removeValue()
+    }
+    
     typealias UserModel = UserLocation
     static func fetch(callback: @escaping ([UserModel]) -> Void) {
         Database.database().reference().child(path).observe(.value, with: { (snapshot) in
