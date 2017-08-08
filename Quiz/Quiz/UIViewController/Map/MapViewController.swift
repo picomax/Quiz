@@ -22,13 +22,14 @@ class MapViewController: UIViewController {
         return mapView
     }()
     
-    var didFindMyLocation = false
-    var didActiveObserver = false
+    var didFindMyLocation: Bool = false
+    var didActiveObserver: Bool = false
     var prevTimestamp: Int = -1
     var currTimestamp: Int = Int(NSDate().timeIntervalSince1970)
     
     var markerDict = [String: GMSMarker]()
     var locationDict = [String: UserLocation]()
+    var ownLocation: UserLocation?
     
     deinit {
         markerDict.removeAll()
@@ -37,8 +38,19 @@ class MapViewController: UIViewController {
         if didActiveObserver == true {
             mapView.removeObserver(self, forKeyPath:"myLocation")
         }
+        
+        if let location = ownLocation {
+            location.remove()
+        }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if let location = ownLocation {
+            location.remove()
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -112,6 +124,7 @@ class MapViewController: UIViewController {
             guard let strongSelf = self else { return }
             for l in locations {
                 if l.username == currentUser.email {
+                    strongSelf.ownLocation = l
                     continue
                 }
                 
@@ -180,7 +193,7 @@ class MapViewController: UIViewController {
             }
             
             if !didFindMyLocation {
-                mapView.camera = GMSCameraPosition.camera(withTarget: myLocation.coordinate, zoom: 15.0)
+                mapView.camera = GMSCameraPosition.camera(withTarget: myLocation.coordinate, zoom: 18.0)
                 mapView.settings.myLocationButton = true
                 mapView.settings.compassButton = true
                 didFindMyLocation = true
