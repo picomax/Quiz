@@ -24,9 +24,11 @@ class MapViewController: UIViewController {
     
     var didFindMyLocation = false
     var didActiveObserver = false
+    var prevTimestamp: Int = -1
+    var currTimestamp: Int = Int(NSDate().timeIntervalSince1970)
     
     deinit {
-        if didActiveObserver {
+        if didActiveObserver == true {
             mapView.removeObserver(self, forKeyPath:"myLocation")
         }
     }
@@ -65,6 +67,11 @@ class MapViewController: UIViewController {
                     continue
                 }
                 
+                // for a while 120 sec
+                if l.timestamp < strongSelf.currTimestamp - 120 {
+                    continue
+                }
+                
                 let newLocation: CLLocation = CLLocation.init(latitude: l.coordinate.latitude, longitude: l.coordinate.longitude)
                 let distanceKiloMeters = (newLocation.distance(from: stdLocation))/1000
                 let distanceMiles = distanceKiloMeters * 0.621371
@@ -83,7 +90,7 @@ class MapViewController: UIViewController {
         guard let currentUser = Auth.auth().currentUser else { return }
         let stdLocation: CLLocation = CLLocation.init(latitude: location.latitude, longitude: location.longitude)
         
-        //let timestamp = Int(NSDate().timeIntervalSince1970) - 30
+        //let timestamp = Int(NSDate().timeIntervalSince1970)
         
         //let userListHandler = databaseReference.child("location").observe(.value, with: { (snapshot) in
         _ = databaseReference.child("location").observe(.value, with: { [weak self] (snapshot) in
@@ -120,6 +127,13 @@ class MapViewController: UIViewController {
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "myLocation", let change = change, let myLocation: CLLocation = change[.newKey] as? CLLocation {
+            currTimestamp = Int(NSDate().timeIntervalSince1970)
+            
+            // every 5 sec
+            if prevTimestamp > 0 && prevTimestamp > currTimestamp - 5 {
+                return
+            }
+            
             if !didFindMyLocation {
                 mapView.camera = GMSCameraPosition.camera(withTarget: myLocation.coordinate, zoom: 14.0)
                 mapView.settings.myLocationButton = true
@@ -128,15 +142,18 @@ class MapViewController: UIViewController {
             }
             update(location: myLocation.coordinate)
             updateMarkers(location: myLocation.coordinate)
+            
+            prevTimestamp = currTimestamp
         }
     }
     
     //fileprivate func update(location: CLLocationCoordinate2D) {
     fileprivate func update(location: CLLocationCoordinate2D) {
         guard let currentUser = Auth.auth().currentUser else { return }
+        let timestamp = Int(NSDate().timeIntervalSince1970)
         let location = UserLocation(uid: currentUser.uid,
                                   username: currentUser.email ?? "NA",
-                                  coordinate: location)
+                                  coordinate: location, timestamp: timestamp)
         location.update()
     }
     

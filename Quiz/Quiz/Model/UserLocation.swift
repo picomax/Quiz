@@ -14,11 +14,13 @@ class UserLocation {
     var coordinate: CLLocationCoordinate2D
     var username: String
     var uid: String
+    var timestamp: Int
     
-    required init(uid: String, username: String, coordinate: CLLocationCoordinate2D) {
+    required init(uid: String, username: String, coordinate: CLLocationCoordinate2D, timestamp: Int) {
         self.uid = uid
         self.username = username
         self.coordinate = coordinate
+        self.timestamp = timestamp
     }
 }
 
@@ -26,9 +28,11 @@ extension UserLocation: ModelProtocol {
     static var path: String { return "location" }
     var key: String { return uid }
     var rawValue: [AnyHashable: Any] {
+        let timestamp = Int(NSDate().timeIntervalSince1970) - 30
         return ["username": username,
                 "longitude": coordinate.longitude,
-                "latitude": coordinate.latitude]
+                "latitude": coordinate.latitude,
+                "timestamp": timestamp]
     }
     
     func update() {
@@ -47,12 +51,14 @@ extension UserLocation: ModelProtocol {
             for (key, value) in items {
                 guard let username = value["username"] as? String,
                     let latitude = value["latitude"] as? Double,
-                    let longitude = value["longitude"] as? Double else {
+                    let longitude = value["longitude"] as? Double,
+                    let timestamp = value["timestamp"] as? Int else {
                         continue
                 }
                 let userLocation = UserLocation(uid: key,
                                             username: username,
-                                            coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
+                                            coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
+                                            timestamp: timestamp)
                 results.append(userLocation)
                 
             }
