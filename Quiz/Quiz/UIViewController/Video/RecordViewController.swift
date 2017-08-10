@@ -16,6 +16,9 @@ import FirebaseStorage
 class RecordViewController: UIViewController {
     let uid: String
     var didFinished: Bool = false
+    var videoPath: String = ""
+    var thumbPath: String = ""
+    
     
     required init(uid: String) {
         self.uid = uid
@@ -71,6 +74,11 @@ class RecordViewController: UIViewController {
         
         self.present(imagePicker, animated: true, completion: nil)
     }
+    
+    fileprivate func update() {
+        let location = UserVideo(uid: uid, mov: videoPath, png: thumbPath)
+        location.update()
+    }
 }
 
 extension RecordViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
@@ -112,6 +120,9 @@ extension RecordViewController: UIImagePickerControllerDelegate, UINavigationCon
             }
             // Metadata contains file metadata such as size, content-type, and download URL.
             let downloadURL = metadata.downloadURL()
+            strongSelf.videoPath = downloadURL?.absoluteString ?? ""
+            
+            strongSelf.update()
             
             strongSelf.closeCamera()
             let alert = UIAlertController(text: "Uploaded Completely.", actionTitle: "OK")
@@ -133,7 +144,7 @@ extension RecordViewController: UIImagePickerControllerDelegate, UINavigationCon
             }
             // Metadata contains file metadata such as size, content-type, and download URL.
             let downloadURL = metadata.downloadURL()
-            
+            strongSelf.thumbPath = downloadURL?.absoluteString ?? ""
         }
     }
     
