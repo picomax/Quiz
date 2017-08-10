@@ -9,8 +9,8 @@
 import UIKit
 
 class VideoCollectionCell: UICollectionViewCell {
-    @IBOutlet fileprivate weak var imageView: UIImageView!
-    @IBOutlet fileprivate weak var titleLabel: UILabel!
+    @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var titleLabel: UILabel!
     
     func set(video: UserVideo) {
         titleLabel.text = video.uid

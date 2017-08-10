@@ -12,7 +12,9 @@ import FirebaseStorage
 import FirebaseAuth
 
 class VideoViewController: UIViewController {
+    
     @IBOutlet fileprivate weak var collectionView: UICollectionView!
+    
     fileprivate var dataSource: [UserVideo] = []
     fileprivate let storage = Storage.storage()
     
@@ -38,8 +40,8 @@ class VideoViewController: UIViewController {
     }
     
     func didSelectChooseVideoButton() {
-        let selectedVideos = dataSource.filter({ return $0.isSelected })
-        guard selectedVideos.count == 2 else { return }
+        //let selectedVideos = dataSource.filter({ return $0.isSelected })
+        //guard selectedVideos.count == 2 else { return }
         
         let vc = RecordViewController(uid: Auth.auth().currentUser!.uid)
         present(vc, animated: true, completion: nil)
@@ -61,14 +63,14 @@ class VideoViewController: UIViewController {
     @IBAction func didSelectMergeButton() {
         let selectedItems = dataSource.filter({ return $0.isSelected })
         guard selectedItems.count == 2 else { return }
-        download(url: selectedItems[0].url, filename: "video0.mov") { [weak self] (video1Url) in
+        download(url: selectedItems[0].mov, filename: "video0.mov") { [weak self] (video1Url) in
             guard let strongSelf = self else { return }
             guard let video1Url = video1Url else {
                 return
             }
             dLog(video1Url)
             
-            strongSelf.download(url: selectedItems[1].url, filename: "video1.mov", callback: { (video2Url) in
+            strongSelf.download(url: selectedItems[1].mov, filename: "video1.mov", callback: { (video2Url) in
                 guard let video2Url = video2Url else {
                     return
                 }

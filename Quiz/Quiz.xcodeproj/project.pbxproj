@@ -15,6 +15,7 @@
 		0414D2531F34FD0100FB9952 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0414D2521F34FD0100FB9952 /* Info.plist */; };
 		042AF6991F3C319400976C39 /* RecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042AF6981F3C319400976C39 /* RecordViewController.swift */; };
 		042AF69B1F3C31AE00976C39 /* VideoCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042AF69A1F3C31AE00976C39 /* VideoCollectionCell.swift */; };
+		045E12781F3CDC8000C412E6 /* Video.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 045E12771F3CDC8000C412E6 /* Video.storyboard */; };
 		049B1C661F37841E00678E9C /* ModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049B1C651F37841E00678E9C /* ModelProtocol.swift */; };
 		049B1C681F37842700678E9C /* UserLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049B1C671F37842700678E9C /* UserLocation.swift */; };
 		049B1C6A1F37843000678E9C /* UserVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049B1C691F37843000678E9C /* UserVideo.swift */; };
@@ -53,6 +54,7 @@
 		0414D2521F34FD0100FB9952 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		042AF6981F3C319400976C39 /* RecordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordViewController.swift; sourceTree = "<group>"; };
 		042AF69A1F3C31AE00976C39 /* VideoCollectionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoCollectionCell.swift; sourceTree = "<group>"; };
+		045E12771F3CDC8000C412E6 /* Video.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Video.storyboard; sourceTree = "<group>"; };
 		049B1C651F37841E00678E9C /* ModelProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelProtocol.swift; sourceTree = "<group>"; };
 		049B1C671F37842700678E9C /* UserLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserLocation.swift; sourceTree = "<group>"; };
 		049B1C691F37843000678E9C /* UserVideo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserVideo.swift; sourceTree = "<group>"; };
@@ -152,6 +154,7 @@
 				0414D24E1F34FCF400FB9952 /* LaunchScreen.storyboard */,
 				0414D24F1F34FCF400FB9952 /* Main.storyboard */,
 				04DC18751F35942700EA0357 /* SignIn.storyboard */,
+				045E12771F3CDC8000C412E6 /* Video.storyboard */,
 			);
 			path = Storyboards;
 			sourceTree = "<group>";
@@ -342,6 +345,7 @@
 				0414D2511F34FCF400FB9952 /* Main.storyboard in Resources */,
 				04DC18741F35936300EA0357 /* GoogleService-Info.plist in Resources */,
 				0414D24D1F34FCB200FB9952 /* Assets.xcassets in Resources */,
+				045E12781F3CDC8000C412E6 /* Video.storyboard in Resources */,
 				04DC18761F35942700EA0357 /* SignIn.storyboard in Resources */,
 				0414D2501F34FCF400FB9952 /* LaunchScreen.storyboard in Resources */,
 			);

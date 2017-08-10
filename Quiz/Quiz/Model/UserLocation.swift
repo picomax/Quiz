@@ -43,8 +43,8 @@ extension UserLocation: ModelProtocol {
         Database.database().reference().child(UserLocation.path).child(key).removeValue()
     }
     
-    typealias UserModel = UserLocation
-    static func fetch(callback: @escaping ([UserModel]) -> Void) {
+    typealias LocationItem = UserLocation
+    static func fetch(callback: @escaping ([LocationItem]) -> Void) {
         Database.database().reference().child(path).observe(.value, with: { (snapshot) in
             guard let items = snapshot.value as? [String: AnyObject] else {
                 callback([])
@@ -59,11 +59,11 @@ extension UserLocation: ModelProtocol {
                     let timestamp = value["timestamp"] as? Int else {
                         continue
                 }
-                let userLocation = UserLocation(uid: key,
+                let item = UserLocation(uid: key,
                                             username: username,
                                             coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
                                             timestamp: timestamp)
-                results.append(userLocation)
+                results.append(item)
                 
             }
             callback(results)
