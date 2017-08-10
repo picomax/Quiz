@@ -38,5 +38,11 @@
 	<string></string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>User location permission is required.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We need Camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need Microphone.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need Photo Library</string>
 </dict>
 </plist>

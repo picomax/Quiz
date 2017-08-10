@@ -12,7 +12,9 @@ import FirebaseStorage
 import FirebaseAuth
 
 class VideoViewController: UIViewController {
+    
     @IBOutlet fileprivate weak var collectionView: UICollectionView!
+    
     fileprivate var dataSource: [UserVideo] = []
     fileprivate let storage = Storage.storage()
     
@@ -38,8 +40,8 @@ class VideoViewController: UIViewController {
     }
     
     func didSelectChooseVideoButton() {
-        let selectedVideos = dataSource.filter({ return $0.isSelected })
-        guard selectedVideos.count == 2 else { return }
+        //let selectedVideos = dataSource.filter({ return $0.isSelected })
+        //guard selectedVideos.count == 2 else { return }
         
         let vc = RecordViewController(uid: Auth.auth().currentUser!.uid)
         present(vc, animated: true, completion: nil)
