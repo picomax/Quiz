@@ -22,17 +22,35 @@ class MapViewController: UIViewController {
         return mapView
     }()
     
-    var didFindMyLocation = false
-    var didActiveObserver = false
+    var didFindMyLocation: Bool = false
+    var didActiveObserver: Bool = false
     var prevTimestamp: Int = -1
     var currTimestamp: Int = Int(NSDate().timeIntervalSince1970)
     
+    var markerDict = [String: GMSMarker]()
+    var locationDict = [String: UserLocation]()
+    var ownLocation: UserLocation?
+    
     deinit {
+        markerDict.removeAll()
+        locationDict.removeAll()
+        
         if didActiveObserver == true {
             mapView.removeObserver(self, forKeyPath:"myLocation")
         }
+        
+        if let location = ownLocation {
+            location.remove()
+        }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if let location = ownLocation {
+            location.remove()
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -46,29 +64,67 @@ class MapViewController: UIViewController {
         locationManager.delegate = self
     }
     
+    fileprivate func removeMarker(location: UserLocation) {
+        guard let prevMarker = markerDict[location.username] else {
+            return
+        }
+        prevMarker.map = nil
+        markerDict.removeValue(forKey: location.username)
+        locationDict.removeValue(forKey: location.username)
+        
+        location.remove()
+    }
+    
     fileprivate func addMarker(location: UserLocation) {
-        let marker = GMSMarker()
-        marker.position = CLLocationCoordinate2D(latitude: location.coordinate.latitude,
-                                                 longitude: location.coordinate.longitude)
-        marker.title = location.username
-        marker.map = mapView;
+        locationDict[location.username] = location
+        
+        if let prevMarker = markerDict[location.username] {
+            prevMarker.position = CLLocationCoordinate2D(latitude: location.coordinate.latitude,
+                                                     longitude: location.coordinate.longitude)
+            prevMarker.title = location.username
+            prevMarker.map = mapView;
+        }else{
+            let marker = GMSMarker()
+            marker.position = CLLocationCoordinate2D(latitude: location.coordinate.latitude,
+                                                     longitude: location.coordinate.longitude)
+            marker.title = location.username
+            marker.map = mapView;
+            
+            markerDict[location.username] = marker
+        }
+        
+        //marker.map = nil
+    }
+    
+    fileprivate func clearMapView() {
+        currTimestamp = Int(NSDate().timeIntervalSince1970)
+        
+        for (key, marker) in markerDict {
+            guard let location = locationDict[key] else {
+                marker.map = nil
+                continue
+            }
+            
+            if location.timestamp < currTimestamp - 60 {
+                //marker.map = nil
+                location.remove()
+            }
+        }
+        
+        locationDict.removeAll()
     }
     
     fileprivate func updateMarkers(location: CLLocationCoordinate2D) {
-        mapView.clear()
-        
         guard let currentUser = Auth.auth().currentUser else { return }
         let stdLocation: CLLocation = CLLocation.init(latitude: location.latitude, longitude: location.longitude)
+        
+        currTimestamp = Int(NSDate().timeIntervalSince1970)
         
         UserLocation.fetch { [weak self] (locations) in
             guard let strongSelf = self else { return }
             for l in locations {
                 if l.username == currentUser.email {
-                    continue
-                }
-                
-                // for a while 120 sec
-                if l.timestamp < strongSelf.currTimestamp - 120 {
+                    strongSelf.ownLocation = l
                     continue
                 }
                 
@@ -81,6 +137,8 @@ class MapViewController: UIViewController {
                 
                 strongSelf.addMarker(location: l)
             }
+            
+            strongSelf.clearMapView()
         }
     }
     /*
@@ -135,12 +193,15 @@ class MapViewController: UIViewController {
             }
             
             if !didFindMyLocation {
-                mapView.camera = GMSCameraPosition.camera(withTarget: myLocation.coordinate, zoom: 14.0)
+                mapView.camera = GMSCameraPosition.camera(withTarget: myLocation.coordinate, zoom: 18.0)
                 mapView.settings.myLocationButton = true
                 mapView.settings.compassButton = true
                 didFindMyLocation = true
             }
+            
             update(location: myLocation.coordinate)
+            
+            //mapView.clear()
             updateMarkers(location: myLocation.coordinate)
             
             prevTimestamp = currTimestamp
@@ -150,10 +211,9 @@ class MapViewController: UIViewController {
     //fileprivate func update(location: CLLocationCoordinate2D) {
     fileprivate func update(location: CLLocationCoordinate2D) {
         guard let currentUser = Auth.auth().currentUser else { return }
-        let timestamp = Int(NSDate().timeIntervalSince1970)
         let location = UserLocation(uid: currentUser.uid,
                                   username: currentUser.email ?? "NA",
-                                  coordinate: location, timestamp: timestamp)
+                                  coordinate: location, timestamp: currTimestamp)
         location.update()
     }
     
