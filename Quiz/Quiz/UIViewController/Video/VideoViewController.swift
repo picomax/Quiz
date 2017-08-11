@@ -95,8 +95,10 @@ class VideoViewController: UIViewController {
         //let vc = RecordViewController(uid: userId, name: userName)
         let storyboard = UIStoryboard(name: "Video", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "RecordViewController")
-        present(vc, animated: true, completion: {
-            self.loading(active: false)
+        present(vc, animated: true, completion: { [weak self] ()->Void in
+            guard let strongSelf = self else { return }
+            strongSelf.loading(active: false)
+            strongSelf.loadMergedVideo()
         })
     }
     
