@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseAuth
+import Kingfisher
 
 class VideoCollectionCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView!
@@ -15,7 +16,9 @@ class VideoCollectionCell: UICollectionViewCell {
     @IBOutlet weak var frameView: UIView!
     
     func set(video: UserVideo) {
-        imageView.imageFromUrl(link: video.png)
+        //imageView.imageFromUrl(link: video.png)
+        let url = URL(string: video.png)
+        imageView.kf.setImage(with: url)
         titleLabel.text = video.name
         
         if let currentUser = Auth.auth().currentUser,
