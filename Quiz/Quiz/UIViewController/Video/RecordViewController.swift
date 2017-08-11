@@ -11,38 +11,53 @@ import UIKit
 import MobileCoreServices
 import MediaPlayer
 import SnapKit
+import FirebaseAuth
 import FirebaseStorage
 
 class RecordViewController: UIViewController {
-    let uid: String
-    let name: String
+    
+    @IBOutlet weak var loadingView: UIView!
+    @IBOutlet weak var indicatorView: UIActivityIndicatorView!
+    
+    var uid: String?
+    var name: String?
     var didFinished: Bool = false
     var videoPath: String = ""
     var thumbPath: String = ""
     
-    
+    var imagePicker: UIImagePickerController?
+    /*
     required init(uid: String, name: String) {
         self.uid = uid
         self.name = name
         super.init(nibName: nil, bundle: nil)
-        /*
-         sourceType = .camera
-         mediaTypes = [kUTTypeMovie as String]
-         allowsEditing = false
-         delegate = self
-         videoMaximumDuration = 15.0
-         */
+        
+        sourceType = .camera
+        mediaTypes = [kUTTypeMovie as String]
+        allowsEditing = false
+        delegate = self
+        videoMaximumDuration = 15.0
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    */
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        uid = Auth.auth().currentUser?.uid
+        name = Auth.auth().currentUser?.email
+    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        loading(active: true)
+        
         if didFinished == true {
-            self.dismiss(animated: true, completion: nil)
+            //self.dismiss(animated: true, completion: nil)
             return
         }
         
@@ -63,23 +78,40 @@ class RecordViewController: UIViewController {
         
         print("captureVideoPressed and camera available.")
         
-        let imagePicker = UIImagePickerController()
+        imagePicker = UIImagePickerController()
         
-        imagePicker.delegate = self
-        imagePicker.sourceType = .camera;
-        imagePicker.mediaTypes = [kUTTypeMovie as String]
-        imagePicker.allowsEditing = false
+        guard let picker = imagePicker else { return }
+        picker.delegate = self
+        picker.sourceType = .camera;
+        picker.mediaTypes = [kUTTypeMovie as String]
+        picker.allowsEditing = false
         //imagePicker.showsCameraControls = true
         
-        imagePicker.allowsEditing = false
-        imagePicker.videoMaximumDuration = 15.0
+        picker.allowsEditing = false
+        picker.videoMaximumDuration = 15.0
         
-        self.present(imagePicker, animated: true, completion: nil)
+        self.present(picker, animated: true, completion: { [weak self] () -> Void in
+            guard let strongSelf = self else { return }
+            strongSelf.loading(active: false)
+        })
     }
     
     fileprivate func update() {
-        let video = UserVideo(uid: uid, name: name, mov: videoPath, png: thumbPath)
+        guard let userId = uid, let userName = name else {
+            return
+        }
+        let video = UserVideo(uid: userId, name: userName, mov: videoPath, png: thumbPath)
         video.update()
+    }
+    
+    func loading(active: Bool) {
+        if active == true {
+            loadingView.isHidden = false
+            indicatorView.startAnimating()
+        } else {
+            indicatorView.stopAnimating()
+            loadingView.isHidden = true
+        }
     }
 }
 
@@ -95,11 +127,13 @@ extension RecordViewController: UIImagePickerControllerDelegate, UINavigationCon
         self.dismiss(animated: true, completion: {})
         UISaveVideoAtPathToSavedPhotosAlbum(pathString, self, nil, nil)
         */
+        closePicker()
         
         let mediaType = info[UIImagePickerControllerMediaType] as! String
         dLog(mediaType)
         guard mediaType == kUTTypeMovie as String, let url = info[UIImagePickerControllerMediaURL] as? URL else {
-            closeCamera()
+            closePicker()
+            dismiss(animated: true, completion: {})
             return
         }
         
@@ -109,13 +143,22 @@ extension RecordViewController: UIImagePickerControllerDelegate, UINavigationCon
             uploadImage(image: thumbnail)
         }
         
+        guard let userId = uid else {
+            //strongSelf.loading(active: false)
+            closePicker()
+            dismiss(animated: true, completion: {})
+            return
+        }
+        
         let data = try! Data(contentsOf: url, options: [])
-        let refVideo = Storage.storage().reference(withPath: "video").child(uid + ".mov")
+        let refVideo = Storage.storage().reference(withPath: "video").child(userId + ".mov")
         let uploadTask = refVideo.putData(data, metadata: nil) { [weak self] (metadata, error) in
             guard let strongSelf = self else { return }
             guard let metadata = metadata else {
                 // Uh-oh, an error occurred!
-                strongSelf.closeCamera()
+                strongSelf.closePicker()
+                strongSelf.dismiss(animated: true, completion: {})
+                
                 let alert = UIAlertController(text: "Upload failed.", actionTitle: "OK")
                 strongSelf.present(alert, animated: true, completion: {})
                 return
@@ -126,7 +169,9 @@ extension RecordViewController: UIImagePickerControllerDelegate, UINavigationCon
             
             strongSelf.update()
             
-            strongSelf.closeCamera()
+            strongSelf.closePicker()
+            strongSelf.dismiss(animated: true, completion: {})
+            
             let alert = UIAlertController(text: "Uploaded Completely.", actionTitle: "OK")
             strongSelf.present(alert, animated: true, completion: {})
         }
@@ -137,7 +182,12 @@ extension RecordViewController: UIImagePickerControllerDelegate, UINavigationCon
             return
         }
         
-        let refImage = Storage.storage().reference(withPath: "video").child(uid + ".png")
+        guard let userId = uid else {
+            return
+        }
+        
+        
+        let refImage = Storage.storage().reference(withPath: "video").child(userId + ".png")
         let uploadTask = refImage.putData(imageData, metadata: nil) { [weak self] (metadata, error) in
             guard let strongSelf = self else { return }
             guard let metadata = metadata else {
@@ -166,11 +216,15 @@ extension RecordViewController: UIImagePickerControllerDelegate, UINavigationCon
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dLog()
         
-        closeCamera()
+        closePicker()
+        dismiss(animated: true, completion: {})
     }
     
-    func closeCamera() {
+    func closePicker() {
         didFinished = true
-        self.dismiss(animated: true, completion: nil)
+        guard let picker = imagePicker else {
+            return
+        }
+        picker.dismiss(animated: true, completion: {})
     }
 }

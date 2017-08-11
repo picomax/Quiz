@@ -18,6 +18,9 @@ class VideoViewController: UIViewController {
     @IBOutlet fileprivate weak var imageView2: UIImageView!
     @IBOutlet fileprivate weak var imageView3: UIImageView!
     
+    @IBOutlet weak var loadingView: UIView!
+    @IBOutlet weak var indicatorView: UIActivityIndicatorView!
+    
     var uid: String?
     var name: String?
     var videoPath: String = ""
@@ -46,13 +49,25 @@ class VideoViewController: UIViewController {
         uid = Auth.auth().currentUser?.uid
         name = Auth.auth().currentUser?.email
         
+        loading(active: true)
         UserVideo.fetch { [weak self] (videos) in
             guard let strongSelf = self else { return }
             strongSelf.dataSource = videos
             strongSelf.collectionView.reloadData()
+            strongSelf.loading(active: false)
         }
         
         loadMergedVideo()
+    }
+    
+    func loading(active: Bool) {
+        if active == true {
+            loadingView.isHidden = false
+            indicatorView.startAnimating()
+        } else {
+            indicatorView.stopAnimating()
+            loadingView.isHidden = true
+        }
     }
     
     func loadMergedVideo() {
@@ -74,12 +89,15 @@ class VideoViewController: UIViewController {
         
         clearSlot()
         
-        guard let userId = uid, let userName = name else {
-            return
-        }
+        self.loading(active: true)
+        
         //let vc = RecordViewController(uid: Auth.auth().currentUser!.uid)
-        let vc = RecordViewController(uid: userId, name: userName)
-        present(vc, animated: true, completion: nil)
+        //let vc = RecordViewController(uid: userId, name: userName)
+        let storyboard = UIStoryboard(name: "Video", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "RecordViewController")
+        present(vc, animated: true, completion: {
+            self.loading(active: false)
+        })
     }
     
     fileprivate func download(url: String, filename: String, callback: @escaping (_ url: URL?) -> Void) {
@@ -97,7 +115,11 @@ class VideoViewController: UIViewController {
     
     @IBAction func didSelectMergeButton() {
         let selectedItems = dataSource.filter({ return $0.isSelected })
-        guard selectedItems.count == 2 else { return }
+        guard selectedItems.count == 2 else {
+            let alert = UIAlertController(text: "You need to select two videos to merge.", actionTitle: "OK")
+            present(alert, animated: true, completion: {})
+            return
+        }
         
         let video1: UserVideo = dataSource[index1]
         let video2: UserVideo = dataSource[index2]
@@ -105,6 +127,7 @@ class VideoViewController: UIViewController {
         let url1 = video1.mov
         let url2 = video2.mov
         
+        loading(active: true)
         clearSlot()
         
         download(url: url1, filename: "video1.mov") { [weak self] (video1Url) in
@@ -116,6 +139,7 @@ class VideoViewController: UIViewController {
             
             strongSelf.download(url: url2, filename: "video2.mov", callback: { (video2Url) in
                 guard let video2Url = video2Url else {
+                    strongSelf.loading(active: false)
                     return
                 }
                 dLog(video2Url)
@@ -126,6 +150,7 @@ class VideoViewController: UIViewController {
                 strongSelf.merge(firstAsset: first, secondAsset: second, callback: { (merged) in
                     dLog(merged)
                     guard let url = merged?.url else {
+                        strongSelf.loading(active: false)
                         return
                     }
                     
@@ -141,12 +166,13 @@ class VideoViewController: UIViewController {
                         strongSelf.uploadImage(image: thumbnail)
                     }
                     
-                    guard let uId = strongSelf.uid else {
+                    guard let userId = strongSelf.uid else {
+                        strongSelf.loading(active: false)
                         return
                     }
                     
                     let data = try! Data(contentsOf: url, options: [])
-                    let refVideo = Storage.storage().reference(withPath: "merge").child(uId + ".mov")
+                    let refVideo = Storage.storage().reference(withPath: "merge").child(userId + ".mov")
                     let uploadTask = refVideo.putData(data, metadata: nil) { [weak self] (metadata, error) in
                         guard let strongSelf = self else { return }
                         guard let metadata = metadata else {
@@ -163,6 +189,8 @@ class VideoViewController: UIViewController {
                         
                         let alert = UIAlertController(text: "Uploaded Completely.", actionTitle: "OK")
                         strongSelf.present(alert, animated: true, completion: {})
+                        
+                        strongSelf.loading(active: false)
                     }
                 })
                 
