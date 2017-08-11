@@ -11,14 +11,16 @@ import FirebaseDatabase
 
 class UserVideo {
     var uid: String
+    var name: String
     var mov: String
     var png: String
     
     // to present selected video status.
     var isSelected: Bool = false
     
-    required init(uid: String, mov: String, png: String) {
+    required init(uid: String, name: String, mov: String, png: String) {
         self.uid = uid
+        self.name = name
         self.mov = mov
         self.png = png
     }
@@ -28,7 +30,7 @@ extension UserVideo: ModelProtocol {
     static var path: String { return "video" }
     var key: String { return uid }
     var rawValue: [AnyHashable: Any] {
-        return ["mov": mov, "png": png]
+        return ["name": name, "mov": mov, "png": png]
     }
     
     func update() {
@@ -49,11 +51,12 @@ extension UserVideo: ModelProtocol {
             
             var results: [UserVideo] = []
             for (key, value) in items {
-                guard let mov = value["mov"] as? String,
+                guard let name = value["name"] as? String,
+                    let mov = value["mov"] as? String,
                     let png = value["png"] as? String else {
                         continue
                 }
-                let item = UserVideo(uid: key, mov: mov, png: png)
+                let item = UserVideo(uid: key, name: name, mov: mov, png: png)
                 results.append(item)
                 
             }

@@ -13,7 +13,8 @@ class VideoCollectionCell: UICollectionViewCell {
     @IBOutlet weak var titleLabel: UILabel!
     
     func set(video: UserVideo) {
-        titleLabel.text = video.uid
+        imageView.imageFromUrl(link: video.png)
+        titleLabel.text = video.name
         
         if video.isSelected {
             contentView.layer.borderColor = UIColor.red.cgColor
