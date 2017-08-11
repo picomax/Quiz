@@ -152,7 +152,8 @@
                                 </connections>
                             </collectionView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7gZ-gN-pkc">
-                                <rect key="frame" x="0.0" y="603" width="375" height="44"/>
+                                <rect key="frame" x="20" y="603" width="335" height="44"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="w0g-SM-xhK"/>
                                 </constraints>
@@ -194,12 +195,12 @@
                             <constraint firstItem="GZ0-uG-9VJ" firstAttribute="top" secondItem="NVO-dk-ROE" secondAttribute="bottom" id="Cfq-mR-8e3"/>
                             <constraint firstAttribute="trailing" secondItem="60M-4b-tBl" secondAttribute="trailing" id="Eov-PP-846"/>
                             <constraint firstItem="60M-4b-tBl" firstAttribute="top" secondItem="WI1-wJ-v05" secondAttribute="topMargin" constant="70" id="I3j-oO-M8U"/>
-                            <constraint firstItem="7gZ-gN-pkc" firstAttribute="leading" secondItem="WI1-wJ-v05" secondAttribute="leading" id="LdQ-a5-wwX"/>
+                            <constraint firstItem="7gZ-gN-pkc" firstAttribute="leading" secondItem="WI1-wJ-v05" secondAttribute="leading" constant="20" id="LdQ-a5-wwX"/>
                             <constraint firstItem="NVO-dk-ROE" firstAttribute="leading" secondItem="WI1-wJ-v05" secondAttribute="leading" id="WoH-jQ-5Ve"/>
                             <constraint firstItem="8ja-1G-OAi" firstAttribute="leading" secondItem="WI1-wJ-v05" secondAttribute="leading" constant="10" id="XrZ-LR-olD"/>
                             <constraint firstItem="8ja-1G-OAi" firstAttribute="top" secondItem="60M-4b-tBl" secondAttribute="bottom" id="ZHk-DL-GEk"/>
                             <constraint firstItem="il4-vq-ZZz" firstAttribute="top" secondItem="8ja-1G-OAi" secondAttribute="bottom" id="aot-MX-Lfk"/>
-                            <constraint firstAttribute="trailing" secondItem="7gZ-gN-pkc" secondAttribute="trailing" id="ocj-4V-60W"/>
+                            <constraint firstAttribute="trailing" secondItem="7gZ-gN-pkc" secondAttribute="trailing" constant="20" id="ocj-4V-60W"/>
                             <constraint firstAttribute="trailing" secondItem="NVO-dk-ROE" secondAttribute="trailing" id="pzb-yl-3Bv"/>
                             <constraint firstItem="60M-4b-tBl" firstAttribute="leading" secondItem="WI1-wJ-v05" secondAttribute="leading" id="zRB-XJ-MWe"/>
                         </constraints>

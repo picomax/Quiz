@@ -130,7 +130,6 @@ class VideoViewController: UIViewController {
         let url2 = video2.mov
         
         loading(active: true)
-        clearSlot()
         
         download(url: url1, filename: "video1.mov") { [weak self] (video1Url) in
             guard let strongSelf = self else { return }
