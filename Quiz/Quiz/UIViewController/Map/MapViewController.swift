@@ -23,9 +23,8 @@ class MapViewController: UIViewController {
     }()
     
     var didFindMyLocation: Bool = false
-    var didActiveObserver: Bool = false
-    var prevTimestamp: Int = -1
-    var currTimestamp: Int = Int(NSDate().timeIntervalSince1970)
+    var prevTimestamp: Double = -1.0
+    var currTimestamp: Double = Date().timeIntervalSince1970
     
     var markerDict = [String: GMSMarker]()
     var locationDict = [String: UserLocation]()
@@ -35,9 +34,7 @@ class MapViewController: UIViewController {
         markerDict.removeAll()
         locationDict.removeAll()
         
-        if didActiveObserver == true {
-            mapView.removeObserver(self, forKeyPath:"myLocation")
-        }
+        mapView.removeObserver(self, forKeyPath:"myLocation")
         
         if let location = ownLocation {
             location.remove()
@@ -62,6 +59,8 @@ class MapViewController: UIViewController {
         
         mapView.delegate = self
         locationManager.delegate = self
+        
+        mapView.addObserver(self, forKeyPath:"myLocation", options:NSKeyValueObservingOptions.new, context:nil)
     }
     
     fileprivate func removeMarker(location: UserLocation) {
@@ -92,13 +91,10 @@ class MapViewController: UIViewController {
             
             markerDict[location.username] = marker
         }
-        
         //marker.map = nil
     }
     
     fileprivate func clearMapView() {
-        currTimestamp = Int(NSDate().timeIntervalSince1970)
-        
         for (key, marker) in markerDict {
             guard let location = locationDict[key] else {
                 marker.map = nil
@@ -117,8 +113,6 @@ class MapViewController: UIViewController {
     fileprivate func updateMarkers(location: CLLocationCoordinate2D) {
         guard let currentUser = Auth.auth().currentUser else { return }
         let stdLocation: CLLocation = CLLocation.init(latitude: location.latitude, longitude: location.longitude)
-        
-        currTimestamp = Int(NSDate().timeIntervalSince1970)
         
         UserLocation.fetch { [weak self] (locations) in
             guard let strongSelf = self else { return }
@@ -141,6 +135,7 @@ class MapViewController: UIViewController {
             strongSelf.clearMapView()
         }
     }
+    
     /*
     fileprivate func updateMarkers(location: CLLocationCoordinate2D) {
         let databaseReference = Database.database().reference()
@@ -185,7 +180,7 @@ class MapViewController: UIViewController {
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "myLocation", let change = change, let myLocation: CLLocation = change[.newKey] as? CLLocation {
-            currTimestamp = Int(NSDate().timeIntervalSince1970)
+            currTimestamp = Date().timeIntervalSince1970
             
             // every 5 sec
             if prevTimestamp > 0 && prevTimestamp > currTimestamp - 5 {
@@ -228,10 +223,6 @@ class MapViewController: UIViewController {
             case .authorizedAlways, .authorizedWhenInUse:
                 print("Access")
                 mapView.isMyLocationEnabled = true
-                if didActiveObserver == false {
-                    mapView.addObserver(self, forKeyPath:"myLocation", options:NSKeyValueObservingOptions.new, context:nil)
-                    didActiveObserver = true
-                }
             }
         } else {
             print("Location services are not enabled")
@@ -240,14 +231,6 @@ class MapViewController: UIViewController {
 }
 
 extension MapViewController: GMSMapViewDelegate {
-    
-    func panoramaViewDidFinishRendering(_ panoramaView: GMSPanoramaView) {
-        dLog("haha")
-    }
-    
-    func mapViewDidFinishTileRendering(_ mapView: GMSMapView) {
-        dLog("haha")
-    }
     
     func mapViewSnapshotReady(_ mapView: GMSMapView) {
         //locationManager.requestWhenInUseAuthorization()
@@ -260,8 +243,6 @@ extension MapViewController: GMSMapViewDelegate {
                                                 preferredStyle: .alert)
         
         let settingsAction = UIAlertAction(title: "Settings", style: .default) { (alertAction) in
-            
-            // THIS IS WHERE THE MAGIC HAPPENS!!!!
             if let appSettings = URL(string: UIApplicationOpenSettingsURLString) {
                 UIApplication.shared.open(appSettings as URL)
             }
@@ -278,13 +259,5 @@ extension MapViewController: GMSMapViewDelegate {
 extension MapViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         checkEnableLocation()
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {
-        dLog("haha")
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
-        dLog("haha")
     }
 }
