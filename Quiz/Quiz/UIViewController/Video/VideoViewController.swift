@@ -14,14 +14,25 @@ import FirebaseAuth
 class VideoViewController: UIViewController {
     
     @IBOutlet fileprivate weak var collectionView: UICollectionView!
+    @IBOutlet fileprivate weak var imageView1: UIImageView!
+    @IBOutlet fileprivate weak var imageView2: UIImageView!
+    @IBOutlet fileprivate weak var imageView3: UIImageView!
+    
+    var uid: String?
+    var name: String?
+    var videoPath: String = ""
+    var thumbPath: String = ""
     
     fileprivate var dataSource: [UserVideo] = []
     fileprivate let storage = Storage.storage()
+    fileprivate var index1: Int = -1
+    fileprivate var index2: Int = -1
     
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "VIDEO"
-        view.backgroundColor = .lightGray
+        //view.backgroundColor = .lightGray
+        view.backgroundColor = .white
         
         let chooseVideoButton = UIButton(frame: .zero)
         chooseVideoButton.setTitle("RECORD", for: .normal)
@@ -32,10 +43,28 @@ class VideoViewController: UIViewController {
         let rightBarButtonItem = UIBarButtonItem(customView: chooseVideoButton)
         navigationItem.rightBarButtonItem = rightBarButtonItem
         
+        uid = Auth.auth().currentUser?.uid
+        name = Auth.auth().currentUser?.email
+        
         UserVideo.fetch { [weak self] (videos) in
             guard let strongSelf = self else { return }
             strongSelf.dataSource = videos
             strongSelf.collectionView.reloadData()
+        }
+        
+        loadMergedVideo()
+    }
+    
+    func loadMergedVideo() {
+        MergedVideo.fetch { [weak self] (videos) in
+            guard let strongSelf = self else { return }
+            guard let userId = strongSelf.uid else { return }
+            for merged: MergedVideo in videos {
+                if merged.uid == userId {
+                    strongSelf.imageView3.imageFromUrl(link: merged.png)
+                    break
+                }
+            }
         }
     }
     
@@ -43,12 +72,13 @@ class VideoViewController: UIViewController {
         //let selectedVideos = dataSource.filter({ return $0.isSelected })
         //guard selectedVideos.count == 2 else { return }
         
-        guard let uid = Auth.auth().currentUser?.uid,
-            let name = Auth.auth().currentUser?.email else {
-                return
+        clearSlot()
+        
+        guard let userId = uid, let userName = name else {
+            return
         }
         //let vc = RecordViewController(uid: Auth.auth().currentUser!.uid)
-        let vc = RecordViewController(uid: uid, name: name)
+        let vc = RecordViewController(uid: userId, name: userName)
         present(vc, animated: true, completion: nil)
     }
     
@@ -68,14 +98,23 @@ class VideoViewController: UIViewController {
     @IBAction func didSelectMergeButton() {
         let selectedItems = dataSource.filter({ return $0.isSelected })
         guard selectedItems.count == 2 else { return }
-        download(url: selectedItems[0].mov, filename: "video0.mov") { [weak self] (video1Url) in
+        
+        let video1: UserVideo = dataSource[index1]
+        let video2: UserVideo = dataSource[index2]
+        
+        let url1 = video1.mov
+        let url2 = video2.mov
+        
+        clearSlot()
+        
+        download(url: url1, filename: "video1.mov") { [weak self] (video1Url) in
             guard let strongSelf = self else { return }
             guard let video1Url = video1Url else {
                 return
             }
             dLog(video1Url)
             
-            strongSelf.download(url: selectedItems[1].mov, filename: "video1.mov", callback: { (video2Url) in
+            strongSelf.download(url: url2, filename: "video2.mov", callback: { (video2Url) in
                 guard let video2Url = video2Url else {
                     return
                 }
@@ -86,7 +125,47 @@ class VideoViewController: UIViewController {
                 
                 strongSelf.merge(firstAsset: first, secondAsset: second, callback: { (merged) in
                     dLog(merged)
+                    guard let url = merged?.url else {
+                        return
+                    }
+                    
+                    /*
+                    guard let pathString = url.path else {
+                        return
+                    }
+                    UISaveVideoAtPathToSavedPhotosAlbum(pathString, self, nil, nil)
+                    */
+                    
+                    if let thumbnail = strongSelf.generateThumbnail(url: url) {
+                        // Use your thumbnail
+                        strongSelf.uploadImage(image: thumbnail)
+                    }
+                    
+                    guard let uId = strongSelf.uid else {
+                        return
+                    }
+                    
+                    let data = try! Data(contentsOf: url, options: [])
+                    let refVideo = Storage.storage().reference(withPath: "merge").child(uId + ".mov")
+                    let uploadTask = refVideo.putData(data, metadata: nil) { [weak self] (metadata, error) in
+                        guard let strongSelf = self else { return }
+                        guard let metadata = metadata else {
+                            // Uh-oh, an error occurred!
+                            let alert = UIAlertController(text: "Upload failed.", actionTitle: "OK")
+                            strongSelf.present(alert, animated: true, completion: {})
+                            return
+                        }
+                        // Metadata contains file metadata such as size, content-type, and download URL.
+                        let downloadURL = metadata.downloadURL()
+                        strongSelf.videoPath = downloadURL?.absoluteString ?? ""
+                        
+                        strongSelf.update()
+                        
+                        let alert = UIAlertController(text: "Uploaded Completely.", actionTitle: "OK")
+                        strongSelf.present(alert, animated: true, completion: {})
+                    }
                 })
+                
             })
         }
     }
@@ -109,17 +188,112 @@ extension VideoViewController: UICollectionViewDelegateFlowLayout, UICollectionV
         let video = dataSource[indexPath.item]
         if video.isSelected {
             video.isSelected = false
-            
+            removeToSlot(index: indexPath.item)
         } else {
             // do not allow to choose more than 2
             guard dataSource.filter({ return $0.isSelected }).count < 2 else {
                 return
             }
             video.isSelected = true
-            
+            addToSlot(index: indexPath.item)
         }
         
         collectionView.reloadItems(at: [indexPath])
+    }
+    
+    func removeToSlot(index: Int) {
+        if index1 == index {
+            index1 = -1;
+            imageView1.image = nil
+            imageView3.image = nil
+        }
+        else if index2 == index {
+            index2 = -1;
+            imageView2.image = nil
+            imageView3.image = nil
+        }
+        
+        if index1 < 0 && index2 < 0 {
+            loadMergedVideo()
+        }
+    }
+    
+    func addToSlot(index: Int) {
+        let video: UserVideo = dataSource[index]
+        if index1 < 0 {
+            index1 = index
+            imageView1.imageFromUrl(link: video.png)
+            imageView3.image = nil
+        }
+        else if index2 < 0 {
+            index2 = index
+            imageView2.imageFromUrl(link: video.png)
+            imageView3.image = nil
+        }
+        else {
+            loadMergedVideo()
+        }
+    }
+    
+    func clearSlot() {
+        index1 = -1
+        imageView1.image = nil
+        index2 = -1
+        imageView2.image = nil
+        imageView3.image = nil
+        
+        let selectedItems = dataSource.filter({ return $0.isSelected })
+        for video in selectedItems {
+            video.isSelected = false
+        }
+        collectionView.reloadData()
+    }
+}
+
+//MARK:- Firebase
+extension VideoViewController {
+    fileprivate func update() {
+        guard let userId = uid, let userName = name else {
+            return
+        }
+        
+        let video = MergedVideo(uid: userId, name: userName, mov: videoPath, png: thumbPath)
+        video.update()
+    }
+    
+    func uploadImage(image: UIImage) {
+        guard let imageData: Data = UIImagePNGRepresentation(image) else {
+            return
+        }
+        
+        guard let userId = uid else {
+            return
+        }
+        
+        let refImage = Storage.storage().reference(withPath: "merge").child(userId + ".png")
+        let uploadTask = refImage.putData(imageData, metadata: nil) { [weak self] (metadata, error) in
+            guard let strongSelf = self else { return }
+            guard let metadata = metadata else {
+                // Uh-oh, an error occurred!
+                return
+            }
+            // Metadata contains file metadata such as size, content-type, and download URL.
+            let downloadURL = metadata.downloadURL()
+            strongSelf.thumbPath = downloadURL?.absoluteString ?? ""
+        }
+    }
+    
+    func generateThumbnail(url: URL) -> UIImage? {
+        let asset = AVAsset(url: url)
+        let assetImgGenerate = AVAssetImageGenerator(asset: asset)
+        assetImgGenerate.appliesPreferredTrackTransform = true
+        assetImgGenerate.maximumSize = CGSize(width: 100, height: 100)
+        let time = CMTimeMake(1, 30)
+        
+        if let img = try? assetImgGenerate.copyCGImage(at: time, actualTime: nil) {
+            return UIImage(cgImage: img)
+        }
+        return nil
     }
 }
 

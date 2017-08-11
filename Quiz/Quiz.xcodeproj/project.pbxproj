@@ -20,6 +20,7 @@
 		049B1C661F37841E00678E9C /* ModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049B1C651F37841E00678E9C /* ModelProtocol.swift */; };
 		049B1C681F37842700678E9C /* UserLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049B1C671F37842700678E9C /* UserLocation.swift */; };
 		049B1C6A1F37843000678E9C /* UserVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049B1C691F37843000678E9C /* UserVideo.swift */; };
+		04A151A01F3E3ACB00FBC912 /* MergedVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A1519F1F3E3ACB00FBC912 /* MergedVideo.swift */; };
 		04DC18631F3591AF00EA0357 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DC18621F3591AF00EA0357 /* MainViewController.swift */; };
 		04DC18651F3591BC00EA0357 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DC18641F3591BC00EA0357 /* MapViewController.swift */; };
 		04DC18671F3591C700EA0357 /* VideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DC18661F3591C700EA0357 /* VideoViewController.swift */; };
@@ -60,6 +61,7 @@
 		049B1C651F37841E00678E9C /* ModelProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelProtocol.swift; sourceTree = "<group>"; };
 		049B1C671F37842700678E9C /* UserLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserLocation.swift; sourceTree = "<group>"; };
 		049B1C691F37843000678E9C /* UserVideo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserVideo.swift; sourceTree = "<group>"; };
+		04A1519F1F3E3ACB00FBC912 /* MergedVideo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MergedVideo.swift; sourceTree = "<group>"; };
 		04DC18621F3591AF00EA0357 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		04DC18641F3591BC00EA0357 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		04DC18661F3591C700EA0357 /* VideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoViewController.swift; sourceTree = "<group>"; };
@@ -178,6 +180,7 @@
 				049B1C651F37841E00678E9C /* ModelProtocol.swift */,
 				049B1C671F37842700678E9C /* UserLocation.swift */,
 				049B1C691F37843000678E9C /* UserVideo.swift */,
+				04A1519F1F3E3ACB00FBC912 /* MergedVideo.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -464,6 +467,7 @@
 				04DC18631F3591AF00EA0357 /* MainViewController.swift in Sources */,
 				042AF69B1F3C31AE00976C39 /* VideoCollectionCell.swift in Sources */,
 				04633F5F1F3D99FF00A05A43 /* UIImageView.swift in Sources */,
+				04A151A01F3E3ACB00FBC912 /* MergedVideo.swift in Sources */,
 				0414D21D1F34FA0C00FB9952 /* AppDelegate.swift in Sources */,
 				049B1C681F37842700678E9C /* UserLocation.swift in Sources */,
 				042AF6991F3C319400976C39 /* RecordViewController.swift in Sources */,
