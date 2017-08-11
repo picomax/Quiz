@@ -43,7 +43,12 @@ class VideoViewController: UIViewController {
         //let selectedVideos = dataSource.filter({ return $0.isSelected })
         //guard selectedVideos.count == 2 else { return }
         
-        let vc = RecordViewController(uid: Auth.auth().currentUser!.uid)
+        guard let uid = Auth.auth().currentUser?.uid,
+            let name = Auth.auth().currentUser?.email else {
+                return
+        }
+        //let vc = RecordViewController(uid: Auth.auth().currentUser!.uid)
+        let vc = RecordViewController(uid: uid, name: name)
         present(vc, animated: true, completion: nil)
     }
     

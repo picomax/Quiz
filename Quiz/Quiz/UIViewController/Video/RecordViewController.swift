@@ -15,13 +15,15 @@ import FirebaseStorage
 
 class RecordViewController: UIViewController {
     let uid: String
+    let name: String
     var didFinished: Bool = false
     var videoPath: String = ""
     var thumbPath: String = ""
     
     
-    required init(uid: String) {
+    required init(uid: String, name: String) {
         self.uid = uid
+        self.name = name
         super.init(nibName: nil, bundle: nil)
         /*
          sourceType = .camera
@@ -76,8 +78,8 @@ class RecordViewController: UIViewController {
     }
     
     fileprivate func update() {
-        let location = UserVideo(uid: uid, mov: videoPath, png: thumbPath)
-        location.update()
+        let video = UserVideo(uid: uid, name: name, mov: videoPath, png: thumbPath)
+        video.update()
     }
 }
 
