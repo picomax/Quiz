@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import AVFoundation
+import AVKit
 import MediaPlayer
 import FirebaseStorage
 import FirebaseAuth
@@ -23,6 +25,7 @@ class VideoViewController: UIViewController {
     
     var uid: String?
     var name: String?
+    var mergedVideo: MergedVideo?
     var videoPath: String = ""
     var thumbPath: String = ""
     
@@ -76,10 +79,13 @@ class VideoViewController: UIViewController {
             guard let userId = strongSelf.uid else { return }
             for merged: MergedVideo in videos {
                 if merged.uid == userId {
-                    strongSelf.imageView3.imageFromUrl(link: merged.png)
+                    strongSelf.mergedVideo = merged
                     break
                 }
             }
+            
+            guard let path = strongSelf.mergedVideo?.png else { return }
+            strongSelf.imageView3.imageFromUrl(link: path)
         }
     }
     
@@ -113,6 +119,36 @@ class VideoViewController: UIViewController {
             }
             callback(url)
         }
+    }
+    
+    func playVideo(url: URL) {
+        let player: AVPlayer = AVPlayer(url: url)
+        let playerController = AVPlayerViewController()
+        playerController.player = player
+        present(playerController, animated: true) {
+            player.play()
+        }
+    }
+    
+    @IBAction func didSelectImageView1(_ sender: Any) {
+        if index1 > -1 {
+            let video: UserVideo = dataSource[index1]
+            guard let itemUrl = URL(string: video.mov) else { return }
+            playVideo(url: itemUrl)
+        }
+    }
+    
+    @IBAction func didSelectImageView2(_ sender: Any) {
+        if index2 > -1 {
+            let video: UserVideo = dataSource[index2]
+            guard let itemUrl = URL(string: video.mov) else { return }
+            playVideo(url: itemUrl)
+        }
+    }
+    
+    @IBAction func didSelectImageView3(_ sender: Any) {
+        guard let itemUrl = URL(string: (mergedVideo?.mov)!) else { return }
+        playVideo(url: itemUrl)
     }
     
     @IBAction func didSelectMergeButton() {
