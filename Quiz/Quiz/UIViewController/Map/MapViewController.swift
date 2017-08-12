@@ -37,7 +37,9 @@ class MapViewController: UIViewController {
         markerDict.removeAll()
         locationDict.removeAll()
         
-        //mapView.removeObserver(self, forKeyPath:"myLocation")
+        mapView.removeObserver(self, forKeyPath:"myLocation")
+        
+        isTimerRunning = false
         timer.invalidate()
         
         if let location = ownLocation {
@@ -48,10 +50,23 @@ class MapViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        isTimerRunning = false
+        timer.invalidate()
+        
         if let location = ownLocation {
             location.remove()
         }
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if isTimerRunning == false {
+            timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: (#selector(MapViewController.requestLocation)), userInfo: nil, repeats: true)
+            isTimerRunning = true
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -61,26 +76,20 @@ class MapViewController: UIViewController {
             make.edges.equalToSuperview()
         }
         
+        mapView.settings.myLocationButton = true
+        mapView.settings.compassButton = true
         mapView.delegate = self
+        
         locationManager.delegate = self
+        locationManager.requestLocation()
         
-        //mapView.addObserver(self, forKeyPath:"myLocation", options:NSKeyValueObservingOptions.new, context:nil)
-        
-        if isTimerRunning == false {
-            runTimer()
-        }
-        
-        requestLocation()
+        mapView.addObserver(self, forKeyPath:"myLocation", options:NSKeyValueObservingOptions.new, context:nil)
     }
     
     func requestLocation() {
-        locationManager.requestLocation()
-    }
-    
-    fileprivate func runTimer() {
-        timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: (#selector(MapViewController.requestLocation)), userInfo: nil, repeats: true)
-        
-        isTimerRunning = true
+        if isTimerRunning {
+            locationManager.requestLocation()
+        }
     }
     
     fileprivate func removeMarker(location: UserLocation) {
@@ -206,19 +215,15 @@ class MapViewController: UIViewController {
     
     //fileprivate func update(location: CLLocationCoordinate2D) {
     fileprivate func update(location: CLLocationCoordinate2D) {
-        currTimestamp = Date().timeIntervalSince1970
-        
-        // every 5 sec
-        //if prevTimestamp > 0 && prevTimestamp > currTimestamp - 5 {
-        if prevTimestamp > currTimestamp - 5 {
-            return
-        }
-        
         if !didFindMyLocation {
             mapView.camera = GMSCameraPosition.camera(withTarget: location, zoom: 18.0)
-            mapView.settings.myLocationButton = true
-            mapView.settings.compassButton = true
             didFindMyLocation = true
+        }
+        
+        currTimestamp = Date().timeIntervalSince1970
+        // every 5 sec
+        if prevTimestamp > 0 && prevTimestamp > currTimestamp - 5 {
+            return
         }
         
         // own information
