@@ -17,8 +17,9 @@ class VideoCollectionCell: UICollectionViewCell {
     
     func set(video: UserVideo) {
         //imageView.imageFromUrl(link: video.png)
-        let url = URL(string: video.png)
-        imageView.kf.setImage(with: url)
+        //let url = URL(string: video.png)
+        //imageView.kf.setImage(with: url)
+        imageView.kf.setImage(with: URL(string: video.png))
         titleLabel.text = video.name
         
         if let currentUser = Auth.auth().currentUser,

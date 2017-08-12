@@ -85,7 +85,8 @@ class VideoViewController: UIViewController {
             }
             
             guard let path = strongSelf.mergedVideo?.png else { return }
-            strongSelf.imageView3.imageFromUrl(link: path)
+            //strongSelf.imageView3.imageFromUrl(link: path)
+            strongSelf.imageView3.kf.setImage(with: URL(string: path))
         }
     }
     
@@ -287,12 +288,14 @@ extension VideoViewController: UICollectionViewDelegateFlowLayout, UICollectionV
         let video: UserVideo = dataSource[index]
         if index1 < 0 {
             index1 = index
-            imageView1.imageFromUrl(link: video.png)
+            //imageView1.imageFromUrl(link: video.png)
+            imageView1.kf.setImage(with: URL(string: video.png))
             imageView3.image = nil
         }
         else if index2 < 0 {
             index2 = index
-            imageView2.imageFromUrl(link: video.png)
+            //imageView2.imageFromUrl(link: video.png)
+            imageView2.kf.setImage(with: URL(string: video.png))
             imageView3.image = nil
         }
         else {
