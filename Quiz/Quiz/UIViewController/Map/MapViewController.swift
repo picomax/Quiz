@@ -22,6 +22,9 @@ class MapViewController: UIViewController {
         return mapView
     }()
     
+    var timer = Timer()
+    var isTimerRunning = false
+    
     var didFindMyLocation: Bool = false
     var prevTimestamp: Double = -1.0
     var currTimestamp: Double = Date().timeIntervalSince1970
@@ -34,7 +37,8 @@ class MapViewController: UIViewController {
         markerDict.removeAll()
         locationDict.removeAll()
         
-        mapView.removeObserver(self, forKeyPath:"myLocation")
+        //mapView.removeObserver(self, forKeyPath:"myLocation")
+        timer.invalidate()
         
         if let location = ownLocation {
             location.remove()
@@ -60,7 +64,23 @@ class MapViewController: UIViewController {
         mapView.delegate = self
         locationManager.delegate = self
         
-        mapView.addObserver(self, forKeyPath:"myLocation", options:NSKeyValueObservingOptions.new, context:nil)
+        //mapView.addObserver(self, forKeyPath:"myLocation", options:NSKeyValueObservingOptions.new, context:nil)
+        
+        if isTimerRunning == false {
+            runTimer()
+        }
+        
+        requestLocation()
+    }
+    
+    func requestLocation() {
+        locationManager.requestLocation()
+    }
+    
+    fileprivate func runTimer() {
+        timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: (#selector(MapViewController.requestLocation)), userInfo: nil, repeats: true)
+        
+        isTimerRunning = true
     }
     
     fileprivate func removeMarker(location: UserLocation) {
@@ -180,36 +200,40 @@ class MapViewController: UIViewController {
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "myLocation", let change = change, let myLocation: CLLocation = change[.newKey] as? CLLocation {
-            currTimestamp = Date().timeIntervalSince1970
-            
-            // every 5 sec
-            if prevTimestamp > 0 && prevTimestamp > currTimestamp - 5 {
-                return
-            }
-            
-            if !didFindMyLocation {
-                mapView.camera = GMSCameraPosition.camera(withTarget: myLocation.coordinate, zoom: 18.0)
-                mapView.settings.myLocationButton = true
-                mapView.settings.compassButton = true
-                didFindMyLocation = true
-            }
-            
             update(location: myLocation.coordinate)
-            
-            //mapView.clear()
-            updateMarkers(location: myLocation.coordinate)
-            
-            prevTimestamp = currTimestamp
         }
     }
     
     //fileprivate func update(location: CLLocationCoordinate2D) {
     fileprivate func update(location: CLLocationCoordinate2D) {
+        currTimestamp = Date().timeIntervalSince1970
+        
+        // every 5 sec
+        //if prevTimestamp > 0 && prevTimestamp > currTimestamp - 5 {
+        if prevTimestamp > currTimestamp - 5 {
+            return
+        }
+        
+        if !didFindMyLocation {
+            mapView.camera = GMSCameraPosition.camera(withTarget: location, zoom: 18.0)
+            mapView.settings.myLocationButton = true
+            mapView.settings.compassButton = true
+            didFindMyLocation = true
+        }
+        
+        // own information
         guard let currentUser = Auth.auth().currentUser else { return }
         let location = UserLocation(uid: currentUser.uid,
                                   username: currentUser.email ?? "NA",
                                   coordinate: location, timestamp: currTimestamp)
         location.update()
+        
+        // marker information
+        updateMarkers(location: location.coordinate)
+        
+        prevTimestamp = currTimestamp
+        
+        dLog("Updated current location information...")
     }
     
     fileprivate func checkEnableLocation() {
@@ -259,5 +283,16 @@ extension MapViewController: GMSMapViewDelegate {
 extension MapViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         checkEnableLocation()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.first {
+            //print("Found user's location: \(location)")
+            update(location: location.coordinate)
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Failed to find user's location: \(error.localizedDescription)")
     }
 }
