@@ -14,11 +14,13 @@ class UserLocation {
     var coordinate: CLLocationCoordinate2D
     var username: String
     var uid: String
+    var timestamp: Double
     
-    required init(uid: String, username: String, coordinate: CLLocationCoordinate2D) {
+    required init(uid: String, username: String, coordinate: CLLocationCoordinate2D, timestamp: Double) {
         self.uid = uid
         self.username = username
         self.coordinate = coordinate
+        self.timestamp = timestamp
     }
 }
 
@@ -26,17 +28,23 @@ extension UserLocation: ModelProtocol {
     static var path: String { return "location" }
     var key: String { return uid }
     var rawValue: [AnyHashable: Any] {
+        let timestamp = Date().timeIntervalSince1970
         return ["username": username,
                 "longitude": coordinate.longitude,
-                "latitude": coordinate.latitude]
+                "latitude": coordinate.latitude,
+                "timestamp": timestamp]
     }
     
     func update() {
         Database.database().reference().child(UserLocation.path).child(key).updateChildValues(rawValue)
     }
     
-    typealias UserModel = UserLocation
-    static func fetch(callback: @escaping ([UserModel]) -> Void) {
+    func remove() {
+        Database.database().reference().child(UserLocation.path).child(key).removeValue()
+    }
+    
+    typealias LocationItem = UserLocation
+    static func fetch(callback: @escaping ([LocationItem]) -> Void) {
         Database.database().reference().child(path).observe(.value, with: { (snapshot) in
             guard let items = snapshot.value as? [String: AnyObject] else {
                 callback([])
@@ -47,13 +55,15 @@ extension UserLocation: ModelProtocol {
             for (key, value) in items {
                 guard let username = value["username"] as? String,
                     let latitude = value["latitude"] as? Double,
-                    let longitude = value["longitude"] as? Double else {
+                    let longitude = value["longitude"] as? Double,
+                    let timestamp = value["timestamp"] as? Double else {
                         continue
                 }
-                let userLocation = UserLocation(uid: key,
+                let item = UserLocation(uid: key,
                                             username: username,
-                                            coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
-                results.append(userLocation)
+                                            coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
+                                            timestamp: timestamp)
+                results.append(item)
                 
             }
             callback(results)

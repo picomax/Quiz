@@ -22,12 +22,48 @@ class MapViewController: UIViewController {
         return mapView
     }()
     
-    var didFindMyLocation = false
-    var didActiveObserver = false
+    var timer = Timer()
+    var isTimerRunning = false
+    
+    var didFindMyLocation: Bool = false
+    var prevTimestamp: Double = -1.0
+    var currTimestamp: Double = Date().timeIntervalSince1970
+    
+    var markerDict = [String: GMSMarker]()
+    var locationDict = [String: UserLocation]()
+    var ownLocation: UserLocation?
     
     deinit {
-        if didActiveObserver {
-            mapView.removeObserver(self, forKeyPath:"myLocation")
+        markerDict.removeAll()
+        locationDict.removeAll()
+        
+        mapView.removeObserver(self, forKeyPath:"myLocation")
+        
+        isTimerRunning = false
+        timer.invalidate()
+        
+        if let location = ownLocation {
+            location.remove()
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        isTimerRunning = false
+        timer.invalidate()
+        
+        if let location = ownLocation {
+            location.remove()
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if isTimerRunning == false {
+            timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: (#selector(MapViewController.requestLocation)), userInfo: nil, repeats: true)
+            isTimerRunning = true
         }
     }
     
@@ -40,21 +76,70 @@ class MapViewController: UIViewController {
             make.edges.equalToSuperview()
         }
         
+        mapView.settings.myLocationButton = true
+        mapView.settings.compassButton = true
         mapView.delegate = self
+        
         locationManager.delegate = self
+        locationManager.requestLocation()
+        
+        mapView.addObserver(self, forKeyPath:"myLocation", options:NSKeyValueObservingOptions.new, context:nil)
+    }
+    
+    func requestLocation() {
+        if isTimerRunning {
+            locationManager.requestLocation()
+        }
+    }
+    
+    fileprivate func removeMarker(location: UserLocation) {
+        guard let prevMarker = markerDict[location.username] else {
+            return
+        }
+        prevMarker.map = nil
+        markerDict.removeValue(forKey: location.username)
+        locationDict.removeValue(forKey: location.username)
+        
+        location.remove()
     }
     
     fileprivate func addMarker(location: UserLocation) {
-        let marker = GMSMarker()
-        marker.position = CLLocationCoordinate2D(latitude: location.coordinate.latitude,
-                                                 longitude: location.coordinate.longitude)
-        marker.title = location.username
-        marker.map = mapView;
+        locationDict[location.username] = location
+        
+        if let prevMarker = markerDict[location.username] {
+            prevMarker.position = CLLocationCoordinate2D(latitude: location.coordinate.latitude,
+                                                     longitude: location.coordinate.longitude)
+            prevMarker.title = location.username
+            prevMarker.map = mapView;
+        }else{
+            let marker = GMSMarker()
+            marker.position = CLLocationCoordinate2D(latitude: location.coordinate.latitude,
+                                                     longitude: location.coordinate.longitude)
+            marker.title = location.username
+            marker.map = mapView;
+            
+            markerDict[location.username] = marker
+        }
+        //marker.map = nil
+    }
+    
+    fileprivate func clearMapView() {
+        for (key, marker) in markerDict {
+            guard let location = locationDict[key] else {
+                marker.map = nil
+                continue
+            }
+            
+            if location.timestamp < currTimestamp - 60 {
+                //marker.map = nil
+                location.remove()
+            }
+        }
+        
+        locationDict.removeAll()
     }
     
     fileprivate func updateMarkers(location: CLLocationCoordinate2D) {
-        mapView.clear()
-        
         guard let currentUser = Auth.auth().currentUser else { return }
         let stdLocation: CLLocation = CLLocation.init(latitude: location.latitude, longitude: location.longitude)
         
@@ -62,6 +147,7 @@ class MapViewController: UIViewController {
             guard let strongSelf = self else { return }
             for l in locations {
                 if l.username == currentUser.email {
+                    strongSelf.ownLocation = l
                     continue
                 }
                 
@@ -74,8 +160,11 @@ class MapViewController: UIViewController {
                 
                 strongSelf.addMarker(location: l)
             }
+            
+            strongSelf.clearMapView()
         }
     }
+    
     /*
     fileprivate func updateMarkers(location: CLLocationCoordinate2D) {
         let databaseReference = Database.database().reference()
@@ -83,7 +172,7 @@ class MapViewController: UIViewController {
         guard let currentUser = Auth.auth().currentUser else { return }
         let stdLocation: CLLocation = CLLocation.init(latitude: location.latitude, longitude: location.longitude)
         
-        //let timestamp = Int(NSDate().timeIntervalSince1970) - 30
+        //let timestamp = Int(NSDate().timeIntervalSince1970)
         
         //let userListHandler = databaseReference.child("location").observe(.value, with: { (snapshot) in
         _ = databaseReference.child("location").observe(.value, with: { [weak self] (snapshot) in
@@ -120,24 +209,36 @@ class MapViewController: UIViewController {
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "myLocation", let change = change, let myLocation: CLLocation = change[.newKey] as? CLLocation {
-            if !didFindMyLocation {
-                mapView.camera = GMSCameraPosition.camera(withTarget: myLocation.coordinate, zoom: 14.0)
-                mapView.settings.myLocationButton = true
-                mapView.settings.compassButton = true
-                didFindMyLocation = true
-            }
             update(location: myLocation.coordinate)
-            updateMarkers(location: myLocation.coordinate)
         }
     }
     
     //fileprivate func update(location: CLLocationCoordinate2D) {
     fileprivate func update(location: CLLocationCoordinate2D) {
+        if !didFindMyLocation {
+            mapView.camera = GMSCameraPosition.camera(withTarget: location, zoom: 18.0)
+            didFindMyLocation = true
+        }
+        
+        currTimestamp = Date().timeIntervalSince1970
+        // every 5 sec
+        if prevTimestamp > 0 && prevTimestamp > currTimestamp - 5 {
+            return
+        }
+        
+        // own information
         guard let currentUser = Auth.auth().currentUser else { return }
         let location = UserLocation(uid: currentUser.uid,
                                   username: currentUser.email ?? "NA",
-                                  coordinate: location)
+                                  coordinate: location, timestamp: currTimestamp)
         location.update()
+        
+        // marker information
+        updateMarkers(location: location.coordinate)
+        
+        prevTimestamp = currTimestamp
+        
+        dLog("Updated current location information...")
     }
     
     fileprivate func checkEnableLocation() {
@@ -151,10 +252,6 @@ class MapViewController: UIViewController {
             case .authorizedAlways, .authorizedWhenInUse:
                 print("Access")
                 mapView.isMyLocationEnabled = true
-                if didActiveObserver == false {
-                    mapView.addObserver(self, forKeyPath:"myLocation", options:NSKeyValueObservingOptions.new, context:nil)
-                    didActiveObserver = true
-                }
             }
         } else {
             print("Location services are not enabled")
@@ -163,14 +260,6 @@ class MapViewController: UIViewController {
 }
 
 extension MapViewController: GMSMapViewDelegate {
-    
-    func panoramaViewDidFinishRendering(_ panoramaView: GMSPanoramaView) {
-        dLog("haha")
-    }
-    
-    func mapViewDidFinishTileRendering(_ mapView: GMSMapView) {
-        dLog("haha")
-    }
     
     func mapViewSnapshotReady(_ mapView: GMSMapView) {
         //locationManager.requestWhenInUseAuthorization()
@@ -183,8 +272,6 @@ extension MapViewController: GMSMapViewDelegate {
                                                 preferredStyle: .alert)
         
         let settingsAction = UIAlertAction(title: "Settings", style: .default) { (alertAction) in
-            
-            // THIS IS WHERE THE MAGIC HAPPENS!!!!
             if let appSettings = URL(string: UIApplicationOpenSettingsURLString) {
                 UIApplication.shared.open(appSettings as URL)
             }
@@ -203,11 +290,14 @@ extension MapViewController: CLLocationManagerDelegate {
         checkEnableLocation()
     }
     
-    func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {
-        dLog("haha")
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.first {
+            //print("Found user's location: \(location)")
+            update(location: location.coordinate)
+        }
     }
     
-    func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
-        dLog("haha")
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Failed to find user's location: \(error.localizedDescription)")
     }
 }

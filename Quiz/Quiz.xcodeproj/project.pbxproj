@@ -13,9 +13,14 @@
 		0414D2501F34FCF400FB9952 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0414D24E1F34FCF400FB9952 /* LaunchScreen.storyboard */; };
 		0414D2511F34FCF400FB9952 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0414D24F1F34FCF400FB9952 /* Main.storyboard */; };
 		0414D2531F34FD0100FB9952 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0414D2521F34FD0100FB9952 /* Info.plist */; };
+		042AF6991F3C319400976C39 /* RecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042AF6981F3C319400976C39 /* RecordViewController.swift */; };
+		042AF69B1F3C31AE00976C39 /* VideoCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042AF69A1F3C31AE00976C39 /* VideoCollectionCell.swift */; };
+		045E12781F3CDC8000C412E6 /* Video.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 045E12771F3CDC8000C412E6 /* Video.storyboard */; };
+		04633F5F1F3D99FF00A05A43 /* UIImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04633F5E1F3D99FF00A05A43 /* UIImageView.swift */; };
 		049B1C661F37841E00678E9C /* ModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049B1C651F37841E00678E9C /* ModelProtocol.swift */; };
 		049B1C681F37842700678E9C /* UserLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049B1C671F37842700678E9C /* UserLocation.swift */; };
 		049B1C6A1F37843000678E9C /* UserVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049B1C691F37843000678E9C /* UserVideo.swift */; };
+		04A151A01F3E3ACB00FBC912 /* MergedVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A1519F1F3E3ACB00FBC912 /* MergedVideo.swift */; };
 		04DC18631F3591AF00EA0357 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DC18621F3591AF00EA0357 /* MainViewController.swift */; };
 		04DC18651F3591BC00EA0357 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DC18641F3591BC00EA0357 /* MapViewController.swift */; };
 		04DC18671F3591C700EA0357 /* VideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DC18661F3591C700EA0357 /* VideoViewController.swift */; };
@@ -49,9 +54,14 @@
 		0414D24E1F34FCF400FB9952 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0414D24F1F34FCF400FB9952 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		0414D2521F34FD0100FB9952 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		042AF6981F3C319400976C39 /* RecordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordViewController.swift; sourceTree = "<group>"; };
+		042AF69A1F3C31AE00976C39 /* VideoCollectionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoCollectionCell.swift; sourceTree = "<group>"; };
+		045E12771F3CDC8000C412E6 /* Video.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Video.storyboard; sourceTree = "<group>"; };
+		04633F5E1F3D99FF00A05A43 /* UIImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageView.swift; sourceTree = "<group>"; };
 		049B1C651F37841E00678E9C /* ModelProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelProtocol.swift; sourceTree = "<group>"; };
 		049B1C671F37842700678E9C /* UserLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserLocation.swift; sourceTree = "<group>"; };
 		049B1C691F37843000678E9C /* UserVideo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserVideo.swift; sourceTree = "<group>"; };
+		04A1519F1F3E3ACB00FBC912 /* MergedVideo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MergedVideo.swift; sourceTree = "<group>"; };
 		04DC18621F3591AF00EA0357 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		04DC18641F3591BC00EA0357 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		04DC18661F3591C700EA0357 /* VideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoViewController.swift; sourceTree = "<group>"; };
@@ -148,6 +158,7 @@
 				0414D24E1F34FCF400FB9952 /* LaunchScreen.storyboard */,
 				0414D24F1F34FCF400FB9952 /* Main.storyboard */,
 				04DC18751F35942700EA0357 /* SignIn.storyboard */,
+				045E12771F3CDC8000C412E6 /* Video.storyboard */,
 			);
 			path = Storyboards;
 			sourceTree = "<group>";
@@ -169,6 +180,7 @@
 				049B1C651F37841E00678E9C /* ModelProtocol.swift */,
 				049B1C671F37842700678E9C /* UserLocation.swift */,
 				049B1C691F37843000678E9C /* UserVideo.swift */,
+				04A1519F1F3E3ACB00FBC912 /* MergedVideo.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -193,6 +205,8 @@
 			isa = PBXGroup;
 			children = (
 				04DC18661F3591C700EA0357 /* VideoViewController.swift */,
+				042AF6981F3C319400976C39 /* RecordViewController.swift */,
+				042AF69A1F3C31AE00976C39 /* VideoCollectionCell.swift */,
 			);
 			path = Video;
 			sourceTree = "<group>";
@@ -210,6 +224,7 @@
 			children = (
 				04DC186B1F3592A800EA0357 /* UIAlertController.swift */,
 				04DC186C1F3592A800EA0357 /* UserDefaults.swift */,
+				04633F5E1F3D99FF00A05A43 /* UIImageView.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -336,6 +351,7 @@
 				0414D2511F34FCF400FB9952 /* Main.storyboard in Resources */,
 				04DC18741F35936300EA0357 /* GoogleService-Info.plist in Resources */,
 				0414D24D1F34FCB200FB9952 /* Assets.xcassets in Resources */,
+				045E12781F3CDC8000C412E6 /* Video.storyboard in Resources */,
 				04DC18761F35942700EA0357 /* SignIn.storyboard in Resources */,
 				0414D2501F34FCF400FB9952 /* LaunchScreen.storyboard in Resources */,
 			);
@@ -449,8 +465,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				04DC18631F3591AF00EA0357 /* MainViewController.swift in Sources */,
+				042AF69B1F3C31AE00976C39 /* VideoCollectionCell.swift in Sources */,
+				04633F5F1F3D99FF00A05A43 /* UIImageView.swift in Sources */,
+				04A151A01F3E3ACB00FBC912 /* MergedVideo.swift in Sources */,
 				0414D21D1F34FA0C00FB9952 /* AppDelegate.swift in Sources */,
 				049B1C681F37842700678E9C /* UserLocation.swift in Sources */,
+				042AF6991F3C319400976C39 /* RecordViewController.swift in Sources */,
 				04DC18671F3591C700EA0357 /* VideoViewController.swift in Sources */,
 				04DC186D1F3592A800EA0357 /* Define.swift in Sources */,
 				049B1C661F37841E00678E9C /* ModelProtocol.swift in Sources */,
@@ -522,7 +542,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -566,7 +586,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";

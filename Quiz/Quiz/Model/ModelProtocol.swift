@@ -14,6 +14,7 @@ protocol ModelProtocol {
     var rawValue: [AnyHashable: Any] { get }
     
     func update()
+    func remove()
     
     associatedtype Model
     static func fetch(callback: @escaping (_ result: [Model]) -> Void)

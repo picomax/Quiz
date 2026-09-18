@@ -101,7 +101,9 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             let vc = MapViewController()
             navigationController?.pushViewController(vc, animated: true)
         case .video:
-            let vc = VideoViewController()
+            //let vc = VideoViewController()
+            let storyboard = UIStoryboard(name: "Video", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "VideoViewController")
             navigationController?.pushViewController(vc, animated: true)
         }
     }
